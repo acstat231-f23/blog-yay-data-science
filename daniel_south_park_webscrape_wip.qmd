@@ -1,0 +1,196 @@
+```{r}
+library(tidyverse)
+library(rvest)
+library(robotstxt)
+library(purrr)
+library(stringr)
+library(dplyr)
+```
+
+
+```{r}
+#|eval: false
+
+#testing
+south_park <- "https://southpark.fandom.com/wiki/Freemium_Isn%27t_Free/Script"
+
+#IT WORKS
+robotstxt::paths_allowed(south_park)
+
+#test from an episode
+sp_18_06 <- south_park %>% #dataframe name will be like temp2           
+  read_html() %>%
+  html_elements("table") %>%
+  purrr::pluck(2) %>% #the table is always 2 for scripts
+  html_table() %>%
+  mutate(Episode_Title = "Freemium Isn't Free") #pick from sp_title_raw
+  
+
+#this stuff can be after the full dataframe is made?
+colnames(sp_18_06) <- c('Character', 'Line', 'Title') #again, temp2
+
+filter(sp_18_06, Character == "Kenny") #this isn't working
+
+#remove any strings contained within []
+#anything with empty observations on character should be removed
+#also any observation with the title on character variable should be removed
+
+
+
+#to generalize this code, here's some logic that could work
+#using the general link + the link name, do this code above. store this information into a temporary variable
+#do something similar to a for loop. add this temp variable to the full_south_park_database (not made yet) using merge
+#make sure you have character, their line, and the episode name
+
+```
+
+```{r}
+#|eval: false
+
+south_park_episodes <- "https://en.wikipedia.org/wiki/List_of_South_Park_episodes" 
+
+robotstxt::paths_allowed(south_park_episodes)
+
+#blank dataframe that has the variables from web scraping
+sp_title_raw <- data.frame(matrix(ncol = 3, nrow = 0))
+
+#provide column names
+colnames(sp_title_raw) <- c('Title')
+
+#loop all 26 seasons
+for (i in 2:27) {
+  temp <- south_park_episodes %>%
+  read_html() %>%
+  html_elements("table") %>%
+  purrr::pluck(i) %>% #up to 27
+  html_table() %>% #now join all this mumbo jumbo with sp_title_raw
+  select(Title)
+  
+  if (i == 2) {
+    sp_title_raw <- temp
+  } else {
+  sp_title_raw <- merge(x=sp_title_raw,y=temp, all=TRUE)
+  }
+}
+
+#renaming the titles
+sp_title_raw <- sp_title_raw %>%
+  mutate(Title = str_replace_all(Title, "#", "")) %>%
+  mutate(Title = str_replace_all(Title, "\"", ""))
+
+#create two columns: one for actual title and one for link title
+sp_title_raw <- sp_title_raw %>%
+  mutate(Link_Title = Title,
+         Link_Title = str_replace_all(Link_Title, " ", "_"),
+         Link_Title = str_replace_all(Link_Title, "\'", "%27"),
+         Link_Title = str_replace_all(Link_Title, "\\?", "%3F"),
+         Link_Title = str_replace_all(Link_Title, "î", "i")
+         )
+  #some scripts are not accounted for (eg. episodes with two names: World Wide Recorder ConcertThe Brown Noise[100]). Since this is only a few observations, it is fine to not worry about it too much
+
+sp_title_raw <- sp_title_raw %>%
+  mutate(URL = paste("https://southpark.fandom.com/wiki/",
+                     sp_title_raw$Link_Title, "/Script", sep=""))
+  
+save(sp_title_raw, file="sp_title_raw.Rdata")
+```
+
+```{r}
+#|eval: false
+
+#test on scraping for one episode
+load(file="sp_title_raw.Rdata")
+
+#dataset ordered not based on season... doesn't really matter for our purposes
+first_url <- sp_title_raw$URL[1]
+
+sp_first <- first_url %>%
+  read_html() %>%
+  html_elements("table") %>%
+  purrr::pluck(2) %>% #the table is always 2 for scripts
+  html_table()
+
+#quick wrangling code to think about (within the loop)
+sp_first <- sp_first %>%
+  mutate(Title = sp_title_raw$Title[1]) %>% #pick from sp_title_raw
+  slice(-1, -n()) #remove first and last observation (not lines)
+
+#remove when generalizing
+sp_complete <- sp_first 
+  
+#further wrangling code (outside the loop)
+colnames(sp_complete) <- c('Character', 'Line', 'Title')
+
+#finish the full wrangling... (I need help)
+sp_complete <- sp_complete %>%
+  filter(!is.na(Character)) #THIS ISN'T WORKING
+  #remove any words that are contained in []
+
+
+#we have created a base for our loop (for all 321 available episodes)
+```
+
+
+```{r}
+#|eval: false
+#for all scripts
+
+sp_scripts_full <- sp_title_raw$URL[1] %>%
+          read_html() %>%
+          html_elements("table") %>%
+          purrr::pluck(2) %>% #the table is always 2 for scripts
+          html_table() %>%
+          mutate(Title = sp_title_raw$Title[j]) %>%
+          slice(-1, -n()) 
+
+for (j in 2:321) {
+  
+  skip_to_next <- FALSE
+  
+  tryCatch(
+    error = function(cnd) {
+      skip_to_next <- TRUE
+    },
+ 
+    if (skip_to_next) { next }  
+    else {
+         sp_scripts_full <- sp_title_raw$URL[j] %>%
+            read_html() %>%
+            html_elements("table") %>%
+            purrr::pluck(2) %>% #the table is always 2 for scripts
+            html_table() %>%
+            mutate(Title = sp_title_raw$Title[j]) %>%
+            slice(-1, -n()) |>
+            bind_rows(sp_scripts_full)
+    }
+  )
+}
+
+save(sp_scripts_full, file="sp_scripts_full.Rdata")
+```
+
+```{r}
+#wrangling the full dataset
+load(file="sp_scripts_full.Rdata")
+
+
+#idea: get rid of words contained in [] (NOT (): that is kenny!). get rid of empty x1 values
+#separate into words
+#filter out the useless words (eg. the)
+#now I have all the words in south park (at least episodes where I got it from)
+
+
+#i can also check the unique number of episodes by looking at # of unique values of "Title"
+
+
+
+#sentiment analysis: words like FUCK (make sure it's not case sensitive)
+  #note that some words in the script are not accounted for (eg. Ky-yle =/= kyle)
+
+#then, we compare between other people in the group
+
+```
+
+
+
+
