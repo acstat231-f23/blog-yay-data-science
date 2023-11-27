@@ -5,8 +5,8 @@ library(robotstxt)
 library(purrr)
 library(stringr)
 library(dplyr)
+library(tidytext)
 ```
-
 
 ```{r}
 #|eval: false
@@ -130,7 +130,6 @@ sp_complete <- sp_complete %>%
 #we have created a base for our loop (for all 321 available episodes)
 ```
 
-
 ```{r}
 #|eval: false
 #for all scripts
@@ -170,27 +169,82 @@ save(sp_scripts_full, file="sp_scripts_full.Rdata")
 ```
 
 ```{r}
+#|eval: false
 #wrangling the full dataset
 load(file="sp_scripts_full.Rdata")
 
 
-#idea: get rid of words contained in [] (NOT (): that is kenny!). get rid of empty x1 values
-#separate into words
-#filter out the useless words (eg. the)
-#now I have all the words in south park (at least episodes where I got it from)
+colnames(sp_scripts_full) <- c('Character', 
+                               'Line', 
+                               'Episode', 
+                               'Empty')
+
+sp_scripts_full <- sp_scripts_full %>%
+  filter(!Character == "" & !Line == "" & !Episode == "") %>%
+  select(c('Character', 'Line', 'Episode')) %>%
+  mutate(Line = gsub("\\[.*?\\]", "", Line))
+  
 
 
-#i can also check the unique number of episodes by looking at # of unique values of "Title"
+sp_lines_full <- sp_scripts_full %>%
+  unnest_tokens(output = word, input = Line) #make sure filter command is working above
 
+#str_which(sp_lines_full$word, "jew") |> length()
+#this concerns me because I swear they say jew way more in the show... 
 
+sp_lines_full_ngram <- sp_scripts_full %>%
+  unnest_tokens(output = threegram, input = Line, token = "ngrams", n = 3)
+  
 
-#sentiment analysis: words like FUCK (make sure it's not case sensitive)
-  #note that some words in the script are not accounted for (eg. Ky-yle =/= kyle)
-
-#then, we compare between other people in the group
-
+#table(unique(sp_scripts_full$Episode))
+#need to make sure I have enough episodes...
 ```
 
+```{r}
+#|eval: false
+#remove the stop words!
+data(stop_words)
+
+stop_words %>% 
+  count(lexicon) #add stop words here (eg. um). can remove too
+
+sp_lines_filtered <- sp_lines_full %>%
+  anti_join(stop_words, by="word")
 
 
+save(sp_lines_filtered, file="sp_lines_filtered.Rdata")
+
+  #note that some words in the script are not accounted for (eg. Ky-yle =/= kyle)
+```
+
+```{r}
+load(file="sp_lines_filtered.Rdata")
+
+#sentiment analysis: words like FUCK (make sure it's not case sensitive)
+#then, we compare between other people in the group
+```
+
+```{r}
+sp_lines_full_ngram |>
+  count(threegram, sort = TRUE) |>
+  slice(1:35) |>
+  # fct_reorder is used to re-order the axis (displaying the word) 
+  # by values of n (the number of times that word was used)
+  ggplot(aes(x = fct_reorder(threegram, n), 
+             y = n, 
+             color = threegram, 
+             fill = threegram)) +
+  geom_col() +
+  # Rotate graph
+  coord_flip() +
+  guides(color = "none", 
+         fill = "none") +
+  labs(
+    # Remove x variable label; notice that although coordinates are flipped, 
+    # the labels correspond to which variables were specified 
+    # as `x` and `y` in `aes()`
+    x = NULL,
+    y = "Number of instances",
+    title = "Most Common ThreeGrams")
+```
 
