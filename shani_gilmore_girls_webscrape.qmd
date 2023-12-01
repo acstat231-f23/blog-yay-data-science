@@ -1,0 +1,96 @@
+```{r}
+library(tidyverse)
+library(rvest)
+library(robotstxt)
+library(purrr)
+library(stringr)
+library(dplyr)
+```
+
+#Loading in the episode links, titles, season into a dataframe called gg_eps
+```{r}
+#|eval: false
+
+#testing
+gilmore_girls <- "https://scriptmochi.com/tv-series/gilmore-girls"
+
+#Allowed!!!
+robotstxt::paths_allowed(gilmore_girls)
+
+#test to get an episode
+ep_links <- gilmore_girls |>         
+  read_html() |>
+  html_elements(".chapter__link")|>
+  html_attr("href")
+
+num <- c(1:157)
+
+#All episode links, numbered, with correct URL
+num_ep_links <- cbind(num, ep_links)|>
+  as.data.frame()
+
+num_ep_links$ep_links <- paste("https://scriptmochi.com/", num_ep_links$ep_links, sep="")
+
+#adding which season as a variable
+num_ep_links <- num_ep_links |>
+  mutate(season = 
+           case_when(
+            as.integer(num)>=1 & as.integer(num)<=21 ~ 1,
+            as.integer(num)>=22 & as.integer(num)<=43 ~ 2,
+            as.integer(num)>=44 & as.integer(num)<=65 ~ 3,
+            as.integer(num)>=66 & as.integer(num)<=87 ~ 4,
+            as.integer(num)>=88 & as.integer(num)<=109 ~ 5,
+            as.integer(num)>=110 & as.integer(num)<=131 ~ 6,
+            as.integer(num)>=132 & as.integer(num)<=153 ~ 7,
+            as.integer(num)>=154 & as.integer(num)<=157 ~ 8)) 
+
+#Getting episode titles
+titles <- gilmore_girls |>         
+  read_html() |>
+  html_elements("a")|>
+  html_text() |>
+  as.data.frame() |>
+  slice(12:168)|>
+  rename(title = `html_text(html_elements(read_html(gilmore_girls), "a"))`)|>
+  #TO RENAME COLUMN DO THIS colnames(dataframe) = c("name")
+  mutate(title = str_replace(title,"- ", ""))|>
+  mutate(title = str_replace(title,"[0-9]+", ""))
+
+#joining episode links with the titles
+gg_eps <- cbind(num_ep_links, titles)
+
+```
+#Reading the text of each episode into another column, starting with just the pilot to test
+```{r}
+pilot_url <- "https://scriptmochi.com/tv-series/gilmore-girls/the-pilot-1149"  
+
+pilot_text <- pilot_url |>
+  read_html() |>
+  html_elements(".content") |>
+  html_text2() 
+
+#cat(pilot_text)
+
+
+# Pre-allocate new column in dataframe for episode text
+gg_with_text <- gg_eps |>
+  mutate(text = "") 
+
+# Iterate through links MIGHT WORK? GETS GLITCHY AT DIF TIMES AND SAYS replacement has length zero
+for (i in 1:157) {
+#Scrape episode i's text and save it to row i of the `text` variable
+  gg_with_text$text[i] <- 
+  gg_eps$ep_links[i]|>
+  read_html() |>
+  html_elements(".content") |>
+  html_text2()   
+  
+#Confirm bots are allowed to access the page 
+robotstxt::paths_allowed(gg_eps$ep_links[i])
+}
+```
+```
+
+
+
+
