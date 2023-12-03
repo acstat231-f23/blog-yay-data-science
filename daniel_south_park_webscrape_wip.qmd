@@ -200,22 +200,47 @@ sp_lines_full_ngram <- sp_scripts_full %>%
 #need to make sure I have enough episodes...
 ```
 
+
 ```{r}
 #|eval: false
 #remove the stop words!
 data(stop_words)
 
-stop_words %>% 
+custom_stop_words <- data.frame(
+  word = c("yeah", 
+           "gonna", 
+           "hey", 
+           "uh", 
+           "wanna", 
+           "alright", 
+           "huh", 
+           "gotta",
+           "butters",
+           "kyle",
+           "stan",
+           "cartman",
+           "kenny",
+           "eric",
+           "ah"), 
+  lexicon = c("custom", "custom", "custom", "custom", 
+              "custom", "custom", "custom", "custom",
+              "custom", "custom", "custom", "custom",
+              "custom", "custom", "custom")
+)
+
+stop_words_full <- bind_rows(stop_words, custom_stop_words)
+
+stop_words_full %>% 
   count(lexicon) #add stop words here (eg. um). can remove too
 
 sp_lines_filtered <- sp_lines_full %>%
-  anti_join(stop_words, by="word")
-
+  anti_join(stop_words_full, by="word")
 
 save(sp_lines_filtered, file="sp_lines_filtered.Rdata")
 
   #note that some words in the script are not accounted for (eg. Ky-yle =/= kyle)
 ```
+
 
 ```{r}
 load(file="sp_lines_filtered.Rdata")
@@ -225,15 +250,15 @@ load(file="sp_lines_filtered.Rdata")
 ```
 
 ```{r}
-sp_lines_full_ngram |>
-  count(threegram, sort = TRUE) |>
+sp_lines_filtered |>
+  count(word, sort = TRUE) |>
   slice(1:35) |>
   # fct_reorder is used to re-order the axis (displaying the word) 
   # by values of n (the number of times that word was used)
-  ggplot(aes(x = fct_reorder(threegram, n), 
+  ggplot(aes(x = fct_reorder(word, n), 
              y = n, 
-             color = threegram, 
-             fill = threegram)) +
+             color = word, 
+             fill = word)) +
   geom_col() +
   # Rotate graph
   coord_flip() +
@@ -245,6 +270,108 @@ sp_lines_full_ngram |>
     # as `x` and `y` in `aes()`
     x = NULL,
     y = "Number of instances",
-    title = "Most Common ThreeGrams")
+    title = "Most Common Words for South Park (Excl. Stop Words")
+```
+
+```{r}
+sp_lines_full_ngram |>
+  count(threegram, sort = TRUE) |>
+  slice(2:36) |> #NA for 1, annoying
+  ggplot(aes(x = fct_reorder(threegram, n), 
+             y = n, 
+             color = threegram, 
+             fill = threegram)) +
+  geom_col() +
+  coord_flip() +
+  guides(color = "none", 
+         fill = "none") +
+  labs(
+    x = NULL,
+    y = "Number of instances",
+    title = "Most Common ThreeGrams for South Park")
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r}
+#sentiments (positive and negative) color coded (graph above)
+pos_neg_val_sentiment <- get_sentiments("afinn") #from tidyverse
+
+#then mutate filtered words with the pos/neg sentiments associated with the words
+sp_lines_filtered_pos_neg <- full_join(sp_lines_filtered, 
+                                          pos_neg_val_sentiment, 
+                                          by="word")
+
+#now remove any lines where sentiment is NA
+sp_lines_filtered_pos_neg <- sp_lines_filtered_pos_neg %>%
+  filter(!is.na(value))
+
+#now we can do something similar with descriptive sentiments (eg. hell feels angry)
+word_sentiment <- get_sentiments("nrc") 
+sp_lines_filtered_sentiments <- full_join(sp_lines_filtered, 
+                                          word_sentiment, 
+                                          by="word")
+sp_lines_filtered_sentiments <- sp_lines_filtered_sentiments %>%
+  filter(!is.na(sentiment))
+```
+
+```{r}
+#ANALYSIS 1
+
+#in these quick analyses, find the overall sentiment of the show (score) and the most frequent words that come up when describing the words used in the show (word_sentiment). One word can have more than one sentiment
+
+sp_lines_filtered_sentiments|>
+  count(sentiment, sort = TRUE) |>
+  slice(1:10) |> #NA for 1, annoying
+  ggplot(aes(x = fct_reorder(sentiment, n), 
+             y = n, 
+             color = sentiment, #maybe important... bad words red, good words green?
+             fill = sentiment)) +
+  geom_col() +
+  coord_flip() +
+  guides(color = "none", 
+         fill = "none") +
+  labs(
+    x = NULL,
+    y = "Number of instances",
+    title = "Most Common Sentiments in South Park")
+
+mean(sp_lines_filtered_pos_neg$value)
+```
+
+```{r}
+#bare code for counting IMPORTANT words spoken by a character
+#do eric cartman first
+
+
+
+
+
+```
+
+
+```{r}
+#lastly to combine all of this, find the sentiments of each main character
+#aka repeat analysis 1 for each main character (2)
+
+
+
+
+
 ```
 
