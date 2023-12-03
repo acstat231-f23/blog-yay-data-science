@@ -1,10 +1,22 @@
+
 ```{r}
+#| label: setup
+#| include: FALSE
+
+knitr::opts_chunk$set(eval = FALSE, message = FALSE)
+
+# improve digit and NA display 
+options(scipen = 1, knitr.kable.NA = '')
+
+
+#Loading in Necessary libraries
 library(tidyverse)
 library(rvest)
 library(robotstxt)
 library(purrr)
 library(stringr)
 library(dplyr)
+library(tidytext)
 ```
 
 #Loading in the episode links, titles, season into a dataframe called gg_eps
@@ -78,16 +90,48 @@ gg_with_text <- gg_eps |>
 
 # Iterate through links MIGHT WORK? GETS GLITCHY AT DIF TIMES AND SAYS replacement has length zero
 for (i in 1:157) {
-#Scrape episode i's text and save it to row i of the `text` variable
-  gg_with_text$text[i] <- 
-  gg_eps$ep_links[i]|>
-  read_html() |>
-  html_elements(".content") |>
-  html_text2()   
+   
+  skip_to_next <- FALSE
+  
+  tryCatch(
+    error = function(cnd) {
+      skip_to_next <- TRUE
+    },
+ 
+    if (skip_to_next) { next }  
+    else {
+         #Scrape episode i's text and save it to row i of the `text` variable
+        gg_with_text$text[i] <- 
+        gg_eps$ep_links[i]|>
+        read_html() |>
+        html_elements(".content") |>
+        html_text2()   
+    }
+  )
   
 #Confirm bots are allowed to access the page 
 robotstxt::paths_allowed(gg_eps$ep_links[i])
 }
+
+save(gg_with_text, file="gg_with_text1.Rdata")
+
+```
+
+
+```{r}
+#Separating into words
+
+gg_with_text_final <- load(file="gg_with_text1.Rdata")
+
+
+#WANT TO FIRST SEPARATE BY LINE TO KEEP THE CHARACTER WHO SAYS IT
+gg_by_characters <- gg_with_text |>
+  unnest_tokens(token = "lines", output = sentence, input = text)
+
+#THEN WANT TO REMOVE THE STAGE DIRECTIONS OR EXPLANATIONS
+#THEN CAN SEPARATE THE WORDS
+gg_separated <- gg_with_text |>
+  unnest_tokens(output = word, input = text)
 ```
 ```
 
