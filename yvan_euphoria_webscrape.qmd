@@ -1,0 +1,100 @@
+---
+title: "yvan_euphoria_webscrape"
+format: pdf
+editor: visual
+---
+
+```{r}
+#| label: setup
+#| include: FALSE
+
+knitr::opts_chunk$set(eval = FALSE, message = FALSE)
+
+# improve digit and NA display 
+options(scipen = 1, knitr.kable.NA = '')
+
+# load packages
+library(tidyverse)
+library(rvest)
+library(robotstxt)
+library(purrr)
+library(stringr)
+library(dplyr)
+library(tidytext)
+```
+
+```{r}
+euph_url1 <- "https://euphoria.fandom.com/wiki/Category:Transcripts_of_Euphoria:_Season_1"
+robotstxt::paths_allowed(euph_url1)
+
+euph_url2 <- "https://euphoria.fandom.com/wiki/Category:Transcripts_of_Euphoria:_Season_2"
+robotstxt::paths_allowed(euph_url2)
+
+euph_html1 <- euph_url1 |>
+  read_html()
+euph_html2 <- euph_url2 |>
+  read_html()
+```
+
+```{r}
+ep_urls1 <- euph_html1 |>
+  html_elements('.category-page__member') |>
+  html_elements("a") |>
+  html_attr("href") |>
+  as.data.frame()
+colnames(ep_urls1) = c("ep_url")
+
+ep_urls2 <- euph_html2 |>
+  html_elements('.category-page__member') |>
+  html_elements("a") |>
+  html_attr("href") |>
+  as.data.frame()
+colnames(ep_urls2) = c("ep_url")
+
+# add main site part to urls
+url_start <- "https://euphoria.fandom.com"
+ep_urls1$ep_url <- paste0(url_start, ep_urls1$ep_url)
+ep_urls2$ep_url <- paste0(url_start, ep_urls2$ep_url)
+
+ep_urls <- rbind(ep_urls1, ep_urls2)
+```
+
+```{r}
+# add script texts to data frame
+n_iter <- 10
+
+scripts <- ep_urls |>
+  # Limit number of rows if we're not scraping all episodes
+  slice(1:n_iter) |> 
+  # Add currently empty column for poem text (to be filled in as we iterate)
+  mutate(text = "")
+
+for (i in seq_len(n_iter)) {
+   # Scrape episode i's text and save it to row i of the `text` variable
+  scripts$text[i] <- scripts$ep_url[i] |>
+    read_html() |>
+    html_elements(".poem") |>
+    html_text2()
+}
+
+scripts <- scripts |>
+  mutate(ep_num = 1:n_iter) |> # add episode number to each row
+  select(text, ep_num)
+```
+
+```{r}
+split_scripts <- scripts |>
+  separate_longer_delim(cols = text, delim = "\n") |>
+  filter(text != "")
+
+split_scripts <- split_scripts |>
+  separate(col = text, into = c("char", "line"), sep = ": ?", remove = TRUE) |>
+  mutate_at("line", str_replace, "\\[V\\.O\\.\\]", "")
+  
+```
+
+
+```{r}
+str_remove("- abc",)
+```
+
