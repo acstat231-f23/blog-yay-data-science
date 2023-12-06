@@ -77,24 +77,80 @@ for (i in seq_len(n_iter)) {
     html_text2()
 }
 
-scripts <- scripts |>
+scripts_filtered <- scripts |>
   mutate(ep_num = 1:n_iter) |> # add episode number to each row
   select(text, ep_num)
-```
 
-```{r}
-split_scripts <- scripts |>
-  separate_longer_delim(cols = text, delim = "\n") |>
-  filter(text != "")
+euph_lines_full <- scripts_filtered |>
+  filter(text != "") |>
+  mutate(text = str_replace(text, "- Wait", "KAT: Wait")) |> # fixing specific format problems
+  mutate(text = str_replace(text, "- Why", "JULES: Why")) |>
+  mutate(text = str_replace(text, "- Yeah", "TREVOR: Yeah")) |>
+  mutate(text = str_replace(text, "23 to", "ANNOUNCER 1: 23 to")) |>
+  mutate(text = str_replace(text, "CASSIE ", "CASSIE: ")) |>
+  mutate(text = str_replace(text, "KAT ", "KAT: ")) |>
+  mutate(text = str_replace(text, "WES ", "WES: ")) |>
+  mutate(text = str_replace(text, "ETHAN Hey.", "ETHAN: Hey.")) |>
+  mutate(text = str_replace(text, "FEZCO [softly]", "FEZCO: [softly]")) |>
+  mutate(text = str_replace(text, "I fuckin'", "RUE: I fuckin'")) |>
+  mutate(text = str_replace(text, "If I could,", "\nJULES: If I could,")) |>
+  mutate(text = str_replace(text, "I think he's", "ANNOUNCER 2: I think he's")) |>
+  mutate(text = str_replace(text, "Then where", "LESLIE: Then where")) |>
+  mutate(text = str_replace(text, "\nin the fucking morning", " in the fucking morning")) |>
+  mutate(text = str_replace(text, "\nlike, all week.", " like, all week.")) |>
+  mutate(text = str_replace(text, "\nof conversation", " of conversation")) |>
+  mutate(text = str_replace(text, "\non his phone", " on his phone")) |>
+  mutate(text = str_replace(text, "\nstupid.", " stupid.")) |>
+  separate_longer_delim(cols = text, delim = "\n")
 
-split_scripts <- split_scripts |>
+
+euph_words_full <- euph_lines_full |>
   separate(col = text, into = c("char", "line"), sep = ": ?", remove = TRUE) |>
-  mutate_at("line", str_replace, "\\[V\\.O\\.\\]", "")
-  
+  unnest_tokens(output = word, input = line)
 ```
 
+```{r}
+data(stop_words)
+
+custom_stop_words <- data.frame(
+  word = c("v.o", "text", "yeah", "gonna",
+           "wanna", "hey", "uh", "um",
+           "rue", "jules", "nate", "maddy",
+           "fez", "gia", "tyler"), 
+  lexicon = c("custom", "custom", "custom", "custom", 
+              "custom", "custom", "custom", "custom",
+              "custom", "custom", "custom", "custom",
+              "custom", "custom", "custom")
+)
+
+stop_words_full <- bind_rows(stop_words, custom_stop_words)
+
+euph_words <- euph_words_full %>%
+  anti_join(stop_words_full, by="word")
+
+save(euph_words, file = "euph_words.Rdata")
+```
 
 ```{r}
-str_remove("- abc",)
+euph_words |>
+  count(char, sort = TRUE)
+
+euph_words |>
+  #filter(char == "KAT") |> # to display a specific character's vocabulary
+  count(word, sort = TRUE) |>
+  slice(1:20) |>
+  ggplot(aes(x = fct_reorder(word, n), y = n, color = word, fill = word)) +
+  geom_col() +
+  # Rotate graph
+  coord_flip() +
+  guides(color = "none", 
+         fill = "none") +
+  labs(
+    # Remove x variable label; notice that although coordinates are flipped, 
+    # the labels correspond to which variables were specified 
+    # as `x` and `y` in `aes()`
+    x = NULL,
+    y = "Number of instances",
+    title = "The most common words said in Euphoria")
 ```
 
