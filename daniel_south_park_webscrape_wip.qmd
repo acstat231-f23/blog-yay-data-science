@@ -410,14 +410,12 @@ sp_lines_filtered |>
     y = "Number of instances",
     title = "Most Common Words for South Park (Excl. Stop Words")
 
-
-
-
 #kable again to create a nice sentiment value chart between these characters
 #mean(sp_lines_filtered_pos_neg$value)
 
 
 ```
+
 ```{r}
 #code for finding average sentiment of the 4 main characters
 #filter for Character == "Cartman", then find the average of the values
@@ -440,4 +438,89 @@ sp_characters_pos_neg %>%
   kable_styling()
 ```
 
+```{r}
+sp_lines_filtered |>
+  filter(Character == "Cartman") |> # to display a specific character's vocabulary
+  count(word, sort = TRUE) |>
+  slice(1:20) |>
+  ggplot(aes(x = fct_reorder(word, n), y = n, color = word, fill = word)) +
+  geom_col() +
+  # Rotate graph
+  coord_flip() +
+  guides(color = "none", 
+         fill = "none") +
+  labs(
+    # Remove x variable label; notice that although coordinates are flipped, 
+    # the labels correspond to which variables were specified 
+    # as `x` and `y` in `aes()`
+    x = NULL,
+    y = "Number of instances",
+    title = "The most common words said by Cartman in South Park")
+```
+```{r}
+sp_lines_filtered |>
+  filter(Character == "Kenny") |> # to display a specific character's vocabulary
+  count(word, sort = TRUE) |>
+  slice(1:20) |>
+  ggplot(aes(x = fct_reorder(word, n), y = n, color = word, fill = word)) +
+  geom_col() +
+  # Rotate graph
+  coord_flip() +
+  guides(color = "none", 
+         fill = "none") +
+  labs(
+    # Remove x variable label; notice that although coordinates are flipped, 
+    # the labels correspond to which variables were specified 
+    # as `x` and `y` in `aes()`
+    x = NULL,
+    y = "Number of instances",
+    title = "The most common words said by Kenny in South Park")
+```
+
+```{r}
+sp_lines_filtered |>
+  filter(Character == "Stan") |> # to display a specific character's vocabulary
+  count(word, sort = TRUE) |>
+  slice(1:20) |>
+  ggplot(aes(x = fct_reorder(word, n), y = n, color = word, fill = word)) +
+  geom_col() +
+  # Rotate graph
+  coord_flip() +
+  guides(color = "none", 
+         fill = "none") +
+  labs(
+    # Remove x variable label; notice that although coordinates are flipped, 
+    # the labels correspond to which variables were specified 
+    # as `x` and `y` in `aes()`
+    x = NULL,
+    y = "Number of instances",
+    title = "The most common words said by Stan in South Park")
+```
+
+```{r}
+sp_lines_filtered |>
+  filter(Character == "Kyle") |> # to display a specific character's vocabulary
+  count(word, sort = TRUE) |>
+  slice(1:20) |>
+  ggplot(aes(x = fct_reorder(word, n), y = n, color = word, fill = word)) +
+  geom_col() +
+  # Rotate graph
+  coord_flip() +
+  guides(color = "none", 
+         fill = "none") +
+  labs(
+    # Remove x variable label; notice that although coordinates are flipped, 
+    # the labels correspond to which variables were specified 
+    # as `x` and `y` in `aes()`
+    x = NULL,
+    y = "Number of instances",
+    title = "The most common words said by Kyle in South Park")
+```
+
+```{r}
+sp_lines_filtered_pos_neg %>%
+  filter(Character == c("Cartman", "Kenny", "Kyle", "Stan")) %>%
+  group_by(Character)
+  mean(sp_lines_filtered_pos_neg$value)
+```
 
