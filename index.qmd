@@ -1,7 +1,7 @@
 ---
-title: "Your Project Title Here"
-author: "Your team member names here"
-date: "Add a date"
+title: "Sentiment Comparison Between Popular TV Shows"
+author: "Shani Getz, Yvan Grinspan, Daniel Jang"
+date: "12/6/2023"
 format:
   html:
     theme: minty
