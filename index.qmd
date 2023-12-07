@@ -21,12 +21,18 @@ options(knitr.kable.NA = '')
 
 # Load packages
 library(tidyverse)
-
+library(rvest)
+library(robotstxt)
+library(purrr)
+library(stringr)
+library(dplyr)
+library(tidytext)
+library(RColorBrewer)
 ```
 
 # Intro
 
-This is a Quarto blog template. This document will be knit to HTML to produce a webpage that will be hosted publicly via GitHub.
+This is our blog! 
 
 ## Website publication work flow
 
@@ -42,17 +48,34 @@ This is a Quarto blog template. This document will be knit to HTML to produce a 
 You can include text, `code`, and output as usual. Remember to take full advantage of Markdown and its [syntax shortcuts](https://www.markdownguide.org/basic-syntax/).
 
 ```{r}
-#| label: ggplot-example
+#| label: EXAMPLE OF MOST COMMON WORDS IN WHOLE SHOW
 #| fig.align: left
 #| out.width: 100%
 
-ggplot(data = cars, aes(x = speed, y = dist)) + 
-  geom_point() + 
-  labs(x = "Speed of car (mph)",
-       y = "Distance taken to stop (ft)",
-       title = "Stopping distance increases with faster speeds",
-       subtitle = "Based on 1920s study") +
-  theme_classic()
+load(file="gg_filtered.Rdata")
+
+gg_filtered |>
+  count(word, sort = TRUE) |>
+  slice(1:30) |>
+  # fct_reorder is used to re-order the axis (displaying the word) 
+  # by values of n (the number of times that word was used)
+  ggplot(aes(x = fct_reorder(word, n), 
+             y = n, 
+             color = word, 
+             fill = word)) +
+  geom_col() +
+  # Rotate graph
+  coord_flip() +
+  guides(color = "none", 
+         fill = "none") +
+  labs(
+    # Remove x variable label; notice that although coordinates are flipped, 
+    # the labels correspond to which variables were specified 
+    # as `x` and `y` in `aes()`
+    x = NULL,
+    y = "Number of instances",
+    title = "Most Common Words for Gilmore Girls (Excl. Stop Words)") 
+ # scale_color_brewer("Diamond\nclarity")
 ```
 
 Examples and additional guidance are provided below. 
