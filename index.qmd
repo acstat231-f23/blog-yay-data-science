@@ -84,6 +84,7 @@ gg_filtered |>
 #| out.width: 100%
 
 load(file="gg_filtered_sentiments.Rdata")
+load(file="gg_filtered_pos_neg.Rdata")
 
 gg_filtered_sentiments|>
   count(sentiment, sort = TRUE) |>
