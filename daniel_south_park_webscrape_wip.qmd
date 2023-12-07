@@ -456,7 +456,15 @@ sp_lines_filtered |>
     x = NULL,
     y = "Number of instances",
     title = "The most common words said by Cartman in South Park")
+
+
+
+temp1 <- sp_lines_filtered_pos_neg %>%
+  filter(Character == "Cartman") 
+
+mean(temp1$value)
 ```
+
 ```{r}
 sp_lines_filtered |>
   filter(Character == "Kenny") |> # to display a specific character's vocabulary
@@ -475,6 +483,11 @@ sp_lines_filtered |>
     x = NULL,
     y = "Number of instances",
     title = "The most common words said by Kenny in South Park")
+
+temp2 <- sp_lines_filtered_pos_neg %>%
+  filter(Character == "Kenny") 
+
+mean(temp2$value)
 ```
 
 ```{r}
@@ -495,6 +508,11 @@ sp_lines_filtered |>
     x = NULL,
     y = "Number of instances",
     title = "The most common words said by Stan in South Park")
+
+temp3 <- sp_lines_filtered_pos_neg %>%
+  filter(Character == "Stan") 
+
+mean(temp3$value)
 ```
 
 ```{r}
@@ -515,12 +533,17 @@ sp_lines_filtered |>
     x = NULL,
     y = "Number of instances",
     title = "The most common words said by Kyle in South Park")
+
+temp4 <- sp_lines_filtered_pos_neg %>%
+  filter(Character == "Kyle") 
+
+mean(temp4$value)
 ```
 
 ```{r}
-sp_lines_filtered_pos_neg %>%
-  filter(Character == c("Cartman", "Kenny", "Kyle", "Stan")) %>%
-  group_by(Character)
-  mean(sp_lines_filtered_pos_neg$value)
+# sp_lines_filtered_pos_neg %>%
+#   filter(Character == c("Cartman", "Kenny", "Kyle", "Stan")) %>%
+#   group_by(Character) %>%
+#   mean(sp_lines_filtered_pos_neg$value)
 ```
 
