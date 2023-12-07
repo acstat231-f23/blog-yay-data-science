@@ -48,7 +48,7 @@ This is our blog!
 You can include text, `code`, and output as usual. Remember to take full advantage of Markdown and its [syntax shortcuts](https://www.markdownguide.org/basic-syntax/).
 
 ```{r}
-#| label: EXAMPLE OF MOST COMMON WORDS IN WHOLE SHOW
+#| label: EXAMPLE OF MOST COMMON WORDS IN GILMORE GIRLS
 #| fig.align: left
 #| out.width: 100%
 
@@ -77,8 +77,9 @@ gg_filtered |>
     title = "Most Common Words for Gilmore Girls (Excl. Stop Words)") 
  # scale_color_brewer("Diamond\nclarity")
 ```
+
 ```{r}
-#| label: EXAMPLE OF SENTIMENT ANALYSIS IN SHOW
+#| label: EXAMPLE OF SENTIMENT ANALYSIS IN GILMORE GIRLS
 #| fig.align: left
 #| out.width: 100%
 
