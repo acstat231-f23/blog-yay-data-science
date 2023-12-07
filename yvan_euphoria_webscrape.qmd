@@ -153,4 +153,3 @@ euph_words |>
     y = "Number of instances",
     title = "The most common words said in Euphoria")
 ```
-
