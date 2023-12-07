@@ -422,20 +422,20 @@ sp_lines_filtered |>
 
 #get the means of sp_lines_filtered_pos_neg$value by each character
 
-avg_sentiment <- aggregate(mean(sp_lines_filtered_pos_neg$value),
-                           by = list(c("Cartman", "Kenny", "Kyle", "Stan"),
-                           FUN = mean))
+# avg_sentiment <- aggregate(mean(sp_lines_filtered_pos_neg$value),
+#                            by = list(c("Cartman", "Kenny", "Kyle", "Stan"),
+#                            FUN = mean))
   
-
-sp_characters_pos_neg <- data.frame(character, avg_sentiment)
-
-
-sp_characters_pos_neg %>%
-  kable(booktabs = TRUE, digits = 2, col.names = c(
-    "Character",
-    "Avg. Sentiment"
-  )) %>%
-  kable_styling()
+# 
+# sp_characters_pos_neg <- data.frame(character, avg_sentiment)
+# 
+# 
+# sp_characters_pos_neg %>%
+#   kable(booktabs = TRUE, digits = 2, col.names = c(
+#     "Character",
+#     "Avg. Sentiment"
+#   )) %>%
+#   kable_styling()
 ```
 
 ```{r}
