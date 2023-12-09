@@ -287,6 +287,8 @@ pos_neg_val_sentiment <- get_sentiments("afinn") #from tidyverse
 gg_filtered_pos_neg <- inner_join(gg_filtered, 
                                           pos_neg_val_sentiment, 
                                           by="word")
+save(gg_filtered_pos_neg, file="gg_filtered_pos_neg.Rdata")
+
 ######WHAT IS FULL JOIN THEN FILTERING VS INNER JOIN LIKE WHAT
 
 #now we can do something similar with descriptive sentiments (eg. hell feels angry)
