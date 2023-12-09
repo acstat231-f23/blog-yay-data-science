@@ -75,6 +75,7 @@ gg_eps <- cbind(num_ep_links, titles)
 ```
 #Reading the text of each episode into another column, starting with just the pilot to test
 ```{r}
+#testing with pilot
 pilot_url <- "https://scriptmochi.com/tv-series/gilmore-girls/the-pilot-1149"  
 
 pilot_text <- pilot_url |>
@@ -82,14 +83,12 @@ pilot_text <- pilot_url |>
   html_elements(".content") |>
   html_text2() 
 
-#cat(pilot_text)
-
 
 # Pre-allocate new column in dataframe for episode text
 gg_with_text <- gg_eps |>
   mutate(text = "") 
 
-# Iterate through links MIGHT WORK? GETS GLITCHY AT DIF TIMES AND SAYS replacement has length zero
+# Iterate through links
 for (i in 1:157) {
    
   skip_to_next <- FALSE
@@ -114,6 +113,7 @@ for (i in 1:157) {
 robotstxt::paths_allowed(gg_eps$ep_links[i])
 }
 
+#saving workspace and rds for future use!
 save(gg_with_text, file="gg_with_text1.Rdata")
 saveRDS(gg_with_text, file="gg_with_text_data.rds")
 
@@ -121,9 +121,8 @@ saveRDS(gg_with_text, file="gg_with_text_data.rds")
 
 
 ```{r}
-
+#loading rds and workspace
 gg_with_text_reloaded <- readRDS(file = "gg_with_text_data.rds")
-
 load(file="gg_with_text1.Rdata")
 
 
@@ -132,7 +131,7 @@ gg_by_characters <- gg_with_text |>
   unnest_tokens(token = "lines", output = sentence, input = text) |>
 
 #separating character from line and then dropping the non character speaking lines
-  #like stage directions or introductory episode information
+#like stage directions or introductory episode information
 gg_by_characters <- gg_by_characters|>
   separate(sentence, c("character", "line"), sep = ":")|>
   drop_na()
@@ -141,11 +140,11 @@ gg_by_characters <- gg_by_characters|>
 gg_by_word <- gg_by_characters|>
   unnest_tokens(output = word, input = line)
 
-#bigrams
+#bigrams - do not end up using this
 gg_bigrams <- gg_by_characters |>
   unnest_tokens(output = bigram, input = line, token = "ngrams", n = 2)
 
-#threegrams
+#threegrams - use this and seems rather irrelevant
 gg_threegrams <- gg_by_characters |>
   unnest_tokens(output = threegram, input = line, token = "ngrams", n = 3)
 
@@ -155,6 +154,7 @@ gg_threegrams <- gg_by_characters |>
 #remove the stop words!
 data(stop_words)
 
+#make a custom stop words list for names and filler words
 custom_stop_words <- data.frame(
   word = c("yeah",
            "gonna",
@@ -189,139 +189,176 @@ custom_stop_words <- data.frame(
 
  stop_words_full <- bind_rows(stop_words, custom_stop_words)
 
- stop_words_full %>%
-   count(lexicon) #add stop words here (eg. um). can remove too
+ stop_words_full |>
+   count(lexicon) 
 
 gg_filtered <- gg_by_word |>
   anti_join(stop_words_full, by="word")
 
+#saving workspace
 save(gg_filtered, file="gg_filtered.Rdata")
 ```
-
 ```{r}
-gg_filtered |>
+#Gilmore Girls Most Common Words Visualization - Shani
+
+#Customizing color palette
+nb.cols <- 20
+mycolors <- colorRampPalette(brewer.pal(8, "Pastel1"))(nb.cols)
+
+#plotting with palette for top 20 words by count 
+#excluding stop words and keeping words without the positivity ranking
+gg_filtered|>
   count(word, sort = TRUE) |>
-  slice(1:30) |>
-  # fct_reorder is used to re-order the axis (displaying the word) 
-  # by values of n (the number of times that word was used)
+  slice(1:20) |>
+  #fct_reorder to descending order it
   ggplot(aes(x = fct_reorder(word, n), 
              y = n, 
-             color = word, 
-             fill = word)) +
+             fill = as.factor(n))) +
   geom_col() +
   # Rotate graph
   coord_flip() +
-  guides(color = "none", 
-         fill = "none") +
+  guides(fill = "none") +
   labs(
-    # Remove x variable label; notice that although coordinates are flipped, 
-    # the labels correspond to which variables were specified 
-    # as `x` and `y` in `aes()`
     x = NULL,
     y = "Number of instances",
-    title = "Most Common Words for Gilmore Girls (Excl. Stop Words)") 
- # scale_color_brewer("Diamond\nclarity")
+    title = "Most Common Words for Gilmore Girls (Excl. Stop Words)") +
+  scale_fill_manual(values = mycolors) +
+  theme_light()
 ```
 ```{r}
+#Gilmore Girls Most Common Words by Character Visualization - Shani
 
+#finding top 5 characters
 top_5_chars <- gg_filtered |>
   count(character, sort = TRUE)|>
   slice(1:5) |>
   select(character)
 
-char_names <- top_5_chars[["character"]]
+#making into vector
+char_names <- str_to_title(top_5_chars[["character"]])
 
-for(i in char_names){
-print(gg_filtered|>
-  filter(character == i)|>
+#color palette
+nb.cols <- 65
+mycolors <- colorRampPalette(brewer.pal(8, "Pastel1"))(nb.cols)
+
+#plotting by character with color palette
+gg_filtered|>
+  filter(str_to_title(character) %in% char_names)|>
   group_by(character)|>
   count(word, sort = TRUE) |>
-  slice(1:30) |>
-  # fct_reorder is used to re-order the axis (displaying the word) 
-  # by values of n (the number of times that word was used)
+  slice(1:15) |>
   ggplot(aes(x = fct_reorder(word, n), 
              y = n, 
-             color = word, 
-             fill = word)) +
+             fill = as.factor(n))) +
   geom_col() +
   # Rotate graph
   coord_flip() +
-  guides(color = "none", 
-         fill = "none") +
+  guides(fill = "none") +
   labs(
-    # Remove x variable label; notice that although coordinates are flipped, 
-    # the labels correspond to which variables were specified 
-    # as `x` and `y` in `aes()`
     x = NULL,
     y = "Number of instances",
-    title = paste("Most Common Words said by", i, "for Gilmore Girls (Excl. Stop Words)"))
-)
-}
- # scale_color_brewer("Diamond\nclarity"
-
+    title = paste("Most Common Words said by the Top 5 Characters for Gilmore Girls (Excl. Stop Words)")) +
+    facet_wrap(facets = ~reorder(str_to_title(character), -n), scales = "free_y") +
+  scale_fill_manual(values = mycolors) +
+  theme_light()
 ```
 
 ```{r}
+#Gilmore Girls Most Common Threegrams Visualization - Shani
+
 gg_threegrams |>
   count(threegram, sort = TRUE) |>
-  slice(2:36) |> #NA for 1, annoying
+  #1 is NA so slicing with first being 2
+  slice(2:22) |>
   ggplot(aes(x = fct_reorder(threegram, n), 
              y = n, 
-             color = threegram, 
-             fill = threegram)) +
+             fill = as.factor(n))) +
   geom_col() +
   coord_flip() +
-  guides(color = "none", 
-         fill = "none") +
+  guides(fill = "none") +
   labs(
     x = NULL,
     y = "Number of instances",
-    title = "Most Common threegram for Gilmore Girls")
+    title = "Most Common Threegrams for Gilmore Girls") +
+  scale_fill_manual(values = mycolors) +
+  theme_light()
 ```
 
 ```{r}
-#sentiments (positive and negative) color coded (graph above)
+#Getting sentiments (values and categories) for the words in Gilmore Girls
+
+#sentiments (positive and negative)
 pos_neg_val_sentiment <- get_sentiments("afinn") #from tidyverse
 
-#then mutate filtered words with the pos/neg sentiments associated with the words
+#then mutate filtered words with the pos/neg values associated with the words
 gg_filtered_pos_neg <- inner_join(gg_filtered, 
                                           pos_neg_val_sentiment, 
                                           by="word")
 save(gg_filtered_pos_neg, file="gg_filtered_pos_neg.Rdata")
 
-######WHAT IS FULL JOIN THEN FILTERING VS INNER JOIN LIKE WHAT
 
-#now we can do something similar with descriptive sentiments (eg. hell feels angry)
+#With descriptive/categorical sentiments (angry, trust, joy, etc)
 word_sentiment <- get_sentiments("nrc") 
 gg_filtered_sentiments <- inner_join(gg_filtered, 
                                           word_sentiment, 
                                           by="word")
 save(gg_filtered_sentiments, file="gg_filtered_sentiments.Rdata")
+```
+
+```{r} 
+#Gilmore Girls Filtered Most Common Words with Sentiment Visualization - Shani
+
+#Most common words with sentiment (not NA in the dplyr package)
+gg_filtered|>
+  count(word, sort = TRUE) |>
+  inner_join(pos_neg_val_sentiment, by = "word")|>
+  slice(1:20) |>
+  ggplot(aes(x = fct_reorder(word, n), 
+             y = n, 
+             fill = as.factor(value))) +
+  geom_col() +
+  # Rotate graph
+  coord_flip() +
+  #showing the legend with positive values at the top
+  guides(fill = guide_legend(reverse = TRUE)) +
+  labs(
+    x = NULL,
+    y = "Number of instances",
+    fill = "Positivity rating",
+    title = "Most Common Words with Sentiment for Gilmore Girls (Excl. Stop Words)") +
+  scale_fill_brewer(palette = "RdYlGn") +
+  theme_light()
 
 ```
 
 ```{r}
-#ANALYSIS 1
+#Gilmore Girls Sentiment Analysis Visualization and Value - Shani
 
-#in these quick analyses, find the overall sentiment of the show (score) and the most frequent words that come up when describing the words used in the show (word_sentiment). One word can have more than one sentiment
+#Customizing color palette
+nb.cols <- 8
+mycolors <- colorRampPalette(brewer.pal(8, "Pastel1"))(nb.cols)
 
+#and how common the 8 different categorical sentiments are (visualization)
+#one word can have more than one sentiment in the dplyr dataset
 gg_filtered_sentiments|>
+  filter(sentiment != "positive" & sentiment != "negative")|>
   count(sentiment, sort = TRUE) |>
-  slice(1:10) |> #NA for 1, annoying
+  slice(1:12) |> 
   ggplot(aes(x = fct_reorder(sentiment, n), 
              y = n, 
-             color = sentiment, #maybe important... bad words red, good words green?
              fill = sentiment)) +
   geom_col() +
   coord_flip() +
-  guides(color = "none", 
-         fill = "none") +
+  guides(fill = "none") +
   labs(
     x = NULL,
     y = "Number of instances",
-    title = "Most Common Sentiments in Gilmore Girls")
+    title = "Most Common Sentiments in Gilmore Girls") +
+  scale_fill_manual(values = mycolors) +
+  theme_light()
 
-mean(gg_filtered_pos_neg$value)
+#finding the overall sentiment of the show (score) 
+cat("The mean positivity value of Gilmore Girls is", mean(gg_filtered_pos_neg$value))
 ```
 
 
