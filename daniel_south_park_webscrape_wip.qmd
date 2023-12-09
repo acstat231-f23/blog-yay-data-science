@@ -196,6 +196,7 @@ sp_lines_full <- sp_scripts_full %>%
 sp_lines_full_ngram <- sp_scripts_full %>%
   unnest_tokens(output = threegram, input = Line, token = "ngrams", n = 3)
   
+save(sp_lines_full_ngram, file="sp_lines_full_ngram.Rdata")
 ```
 
 ```{r}
@@ -247,6 +248,7 @@ save(sp_lines_filtered, file="sp_lines_filtered.Rdata")
 
 ```{r}
 load(file="sp_lines_filtered.Rdata")
+load(file="sp_lines_full_ngram.Rdata")
 
 #sentiment analysis: words like FUCK (make sure it's not case sensitive)
 #then, we compare between other people in the group
@@ -256,21 +258,15 @@ load(file="sp_lines_filtered.Rdata")
 sp_lines_filtered |>
   count(word, sort = TRUE) |>
   slice(1:35) |>
-  # fct_reorder is used to re-order the axis (displaying the word) 
-  # by values of n (the number of times that word was used)
   ggplot(aes(x = fct_reorder(word, n), 
              y = n, 
              color = word, 
              fill = word)) +
   geom_col() +
-  # Rotate graph
   coord_flip() +
   guides(color = "none", 
          fill = "none") +
   labs(
-    # Remove x variable label; notice that although coordinates are flipped, 
-    # the labels correspond to which variables were specified 
-    # as `x` and `y` in `aes()`
     x = NULL,
     y = "Number of instances",
     title = "Most Common Words for South Park (Excl. Stop Words")
@@ -303,22 +299,41 @@ sp_lines_filtered_pos_neg <- full_join(sp_lines_filtered,
                                           pos_neg_val_sentiment, 
                                           by="word")
 
-#now remove any lines where sentiment is NA
-sp_lines_filtered_pos_neg <- sp_lines_filtered_pos_neg %>%
-  filter(!is.na(value))
+#do it for unfiltered words as well
+sp_lines_unfiltered_pos_neg <- full_join(sp_lines_full, 
+                                          pos_neg_val_sentiment, 
+                                          by="word")
+
 
 #now we can do something similar with descriptive sentiments (eg. hell feels angry)
 word_sentiment <- get_sentiments("nrc") 
 sp_lines_filtered_sentiments <- full_join(sp_lines_filtered, 
                                           word_sentiment, 
                                           by="word")
-sp_lines_filtered_sentiments <- sp_lines_filtered_sentiments %>%
-  filter(!is.na(sentiment))
+
+#now for unfiltered
+sp_lines_unfiltered_sentiments <- full_join(sp_lines_full, 
+                                          word_sentiment, 
+                                          by="word")
+
+
+
+save(sp_lines_filtered_pos_neg, file="sp_lines_filtered_pos_neg.Rdata")
+save(sp_lines_filtered_sentiments, file="sp_lines_filtered_sentiments.Rdata")
+save(sp_lines_unfiltered_pos_neg, file="sp_lines_unfiltered_pos_neg.Rdata")
+save(sp_lines_unfiltered_sentiments, file="sp_lines_unfiltered_sentiments.Rdata")
+
 ```
+
 ```{r}
 #ANALYSIS 1
 
 #in these quick analyses, find the overall sentiment of the show (score) and the most frequent words that come up when describing the words used in the show (word_sentiment). One word can have more than one sentiment
+
+load(file="sp_lines_filtered_pos_neg.Rdata")
+load(file="sp_lines_filtered_sentiments.Rdata")
+load(file="sp_lines_unfiltered_pos_neg.Rdata")
+load(file="sp_lines_unfiltered_sentiments.Rdata")
 
 sp_lines_filtered_sentiments|>
   count(sentiment, sort = TRUE) |>
@@ -336,8 +351,31 @@ sp_lines_filtered_sentiments|>
     y = "Number of instances",
     title = "Most Common Sentiments in South Park")
 
-mean(sp_lines_filtered_pos_neg$value)
+mean(sp_lines_filtered_pos_neg$value, na.rm = TRUE)
 ```
+
+```{r}
+sp_lines_unfiltered_sentiments|>
+  count(sentiment, sort = TRUE) |>
+  slice(1:10) |> #NA for 1, annoying
+  ggplot(aes(x = fct_reorder(sentiment, n), 
+             y = n, 
+             color = sentiment, #maybe important... bad words red, good words green?
+             fill = sentiment)) +
+  geom_col() +
+  coord_flip() +
+  guides(color = "none", 
+         fill = "none") +
+  labs(
+    x = NULL,
+    y = "Number of instances",
+    title = "Most Common Sentiments in South Park")
+
+mean(sp_lines_unfiltered_pos_neg$value, na.rm = TRUE)
+```
+
+
+
 
 ```{r}
 #bare code for counting IMPORTANT words spoken by a character and ALL words
@@ -363,6 +401,11 @@ sp_characters <- sp_characters %>%
   mutate(filtered_percent = 100*(filtered / as.integer(count(sp_lines_filtered)))) %>%
   mutate(unfiltered_percent = 100*(unfiltered / as.integer(count(sp_lines_full))))
 
+
+save(sp_characters, file="sp_characters.Rdata")
+load(file="sp_characters.Rdata")
+
+
 sp_characters %>%
   kable(booktabs = TRUE, digits = 2, col.names = c(
     "Character",
@@ -378,68 +421,7 @@ sp_characters %>%
 
 
 ```{r}
-#lastly to combine all of this, find the sentiments of each main character
-#aka repeat analysis 1 for each main character (2)
-#faceting code needed
-
-
-
-
-#group_by(character)
-#then filter by the characters I want
-#facet the graphs
-
-
-
-#okay this looks very low...
-sp_lines_filtered |>
-  filter(Character == c("Cartman", "Kenny", "Kyle", "Stan")) |>
-  group_by(Character) |>
-  count(word, sort = TRUE) |>
-  slice(1:10) |>
-  ggplot(aes(x = fct_reorder(word, n),
-             y = n,
-             color = word,
-             fill = word)) +
-  geom_col() +
-  coord_flip() +
-  guides(color = "none",
-         fill = "none") +
-  labs(
-    x = NULL,
-    y = "Number of instances",
-    title = "Most Common Words for South Park (Excl. Stop Words")
-
-#kable again to create a nice sentiment value chart between these characters
-#mean(sp_lines_filtered_pos_neg$value)
-
-
-```
-
-```{r}
-#code for finding average sentiment of the 4 main characters
-#filter for Character == "Cartman", then find the average of the values
-
-#get the means of sp_lines_filtered_pos_neg$value by each character
-
-# avg_sentiment <- aggregate(mean(sp_lines_filtered_pos_neg$value),
-#                            by = list(c("Cartman", "Kenny", "Kyle", "Stan"),
-#                            FUN = mean))
-  
-# 
-# sp_characters_pos_neg <- data.frame(character, avg_sentiment)
-# 
-# 
-# sp_characters_pos_neg %>%
-#   kable(booktabs = TRUE, digits = 2, col.names = c(
-#     "Character",
-#     "Avg. Sentiment"
-#   )) %>%
-#   kable_styling()
-```
-
-```{r}
-sp_lines_filtered |>
+sp_lines_filtered_pos_neg |>
   filter(Character == "Cartman") |> # to display a specific character's vocabulary
   count(word, sort = TRUE) |>
   slice(1:20) |>
@@ -457,16 +439,18 @@ sp_lines_filtered |>
     y = "Number of instances",
     title = "The most common words said by Cartman in South Park")
 
+sp_lines_filtered_pos_neg %>%
+  filter(Character == "Cartman") %>%
+  summarize(mean_filt_cartman = mean(value, na.rm = TRUE))
 
+sp_lines_unfiltered_pos_neg %>%
+  filter(Character == "Cartman") %>%
+  summarize(mean_unfilt_cartman = mean(value, na.rm = TRUE))
 
-temp1 <- sp_lines_filtered_pos_neg %>%
-  filter(Character == "Cartman") 
-
-mean(temp1$value)
 ```
 
 ```{r}
-sp_lines_filtered |>
+sp_lines_filtered_pos_neg |>
   filter(Character == "Kenny") |> # to display a specific character's vocabulary
   count(word, sort = TRUE) |>
   slice(1:20) |>
@@ -484,14 +468,18 @@ sp_lines_filtered |>
     y = "Number of instances",
     title = "The most common words said by Kenny in South Park")
 
-temp2 <- sp_lines_filtered_pos_neg %>%
-  filter(Character == "Kenny") 
+sp_lines_filtered_pos_neg %>%
+  filter(Character == "Kenny") %>%
+  summarize(mean_filt_kenny = mean(value, na.rm = TRUE))
 
-mean(temp2$value)
+sp_lines_unfiltered_pos_neg %>%
+  filter(Character == "Kenny") %>%
+  summarize(mean_unfilt_kenny = mean(value, na.rm = TRUE))
+
 ```
 
 ```{r}
-sp_lines_filtered |>
+sp_lines_filtered_pos_neg |>
   filter(Character == "Stan") |> # to display a specific character's vocabulary
   count(word, sort = TRUE) |>
   slice(1:20) |>
@@ -509,14 +497,17 @@ sp_lines_filtered |>
     y = "Number of instances",
     title = "The most common words said by Stan in South Park")
 
-temp3 <- sp_lines_filtered_pos_neg %>%
-  filter(Character == "Stan") 
+sp_lines_filtered_pos_neg %>%
+  filter(Character == "Stan") %>%
+  summarize(mean_filt_stan = mean(value, na.rm = TRUE))
 
-mean(temp3$value)
+sp_lines_unfiltered_pos_neg %>%
+  filter(Character == "Stan") %>%
+  summarize(mean_unfilt_stan = mean(value, na.rm = TRUE))
 ```
 
 ```{r}
-sp_lines_filtered |>
+sp_lines_filtered_pos_neg |>
   filter(Character == "Kyle") |> # to display a specific character's vocabulary
   count(word, sort = TRUE) |>
   slice(1:20) |>
@@ -534,10 +525,13 @@ sp_lines_filtered |>
     y = "Number of instances",
     title = "The most common words said by Kyle in South Park")
 
-temp4 <- sp_lines_filtered_pos_neg %>%
-  filter(Character == "Kyle") 
+sp_lines_filtered_pos_neg %>%
+  filter(Character == "Kyle") %>%
+  summarize(mean_filt_kyle = mean(value, na.rm = TRUE))
 
-mean(temp4$value)
+sp_lines_unfiltered_pos_neg %>%
+  filter(Character == "Kyle") %>%
+  summarize(mean_unfilt_kyle = mean(value, na.rm = TRUE))
 ```
 
 ```{r}
@@ -546,4 +540,5 @@ mean(temp4$value)
 #   group_by(Character) %>%
 #   mean(sp_lines_filtered_pos_neg$value)
 ```
+
 
