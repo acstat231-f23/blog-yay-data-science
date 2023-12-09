@@ -28,11 +28,12 @@ library(stringr)
 library(dplyr)
 library(tidytext)
 library(RColorBrewer)
+library(kableExtra)
 ```
 
 # Intro
 
-This is our blog! 
+What makes a TV show popular? While that is a multifaceted question with no straightforward answer, we wanted to find similarities and differences between three vastly different successful TV shows (Gilmore Girls, Euphoria, South Park) to see what makes them so popular. We will be doing text and sentiment analysis, while also giving our own interpretations (as we have seen these shows) as to why these words / sentiments might resonate with viewers
 
 ## Website publication work flow
 
@@ -48,11 +49,29 @@ This is our blog!
 You can include text, `code`, and output as usual. Remember to take full advantage of Markdown and its [syntax shortcuts](https://www.markdownguide.org/basic-syntax/).
 
 ```{r}
+#Gilmore Girls
+load(file="gg_filtered.Rdata")
+load(file="gg_filtered_sentiments.Rdata")
+load(file="gg_filtered_pos_neg.Rdata")
+#Euphoria
+load(file = "euph_words.Rdata")
+#South Park
+load(file="sp_lines_filtered.Rdata")
+load(file="sp_lines_full_ngram.Rdata")
+load(file="sp_lines_filtered_pos_neg.Rdata")
+load(file="sp_lines_filtered_sentiments.Rdata")
+load(file="sp_characters.Rdata")
+```
+
+
+
+
+## Gilmore Girls
+
+```{r}
 #| label: EXAMPLE OF MOST COMMON WORDS IN GILMORE GIRLS
 #| fig.align: left
 #| out.width: 100%
-
-load(file="gg_filtered.Rdata")
 
 gg_filtered |>
   count(word, sort = TRUE) |>
@@ -78,13 +97,12 @@ gg_filtered |>
  # scale_color_brewer("Diamond\nclarity")
 ```
 
+### Sentiment in Gilmore Girls
+
 ```{r}
 #| label: EXAMPLE OF SENTIMENT ANALYSIS IN GILMORE GIRLS
 #| fig.align: left
 #| out.width: 100%
-
-load(file="gg_filtered_sentiments.Rdata")
-load(file="gg_filtered_pos_neg.Rdata")
 
 gg_filtered_sentiments|>
   count(sentiment, sort = TRUE) |>
@@ -105,12 +123,12 @@ gg_filtered_sentiments|>
 mean(gg_filtered_pos_neg$value)
 ```
 
+## Euphoria
+
 ```{r}
 #| label: Most Common Words in Euphoria Overall
 #| fig.align: left
 #| out.width: 100%
-
-load(file = "euph_words.Rdata")
 
 euph_words |>
   #filter(char == "KAT") |> # to display a specific character's vocabulary
@@ -130,6 +148,8 @@ euph_words |>
     y = "Number of instances",
     title = "The most common words said in Euphoria")
 ```
+
+### Euphoria by Character
 
 ```{r}
 #| label: Most Common Words by the Top 5 Characters in Euphoria
@@ -226,6 +246,283 @@ euph_words |>
     y = "Number of instances",
     title = "The most common words said by Kat in Euphoria")
 ```
+
+## South Park
+
+South park is a 
+
+```{r}
+#| label: Most Common Words and 3grams in South Park
+#| fig.align: left
+#| out.width: 100%
+
+sp_lines_filtered |>
+  count(word, sort = TRUE) |>
+  slice(1:35) |>
+  ggplot(aes(x = fct_reorder(word, n), 
+             y = n, 
+             color = word, 
+             fill = word)) +
+  geom_col() +
+  coord_flip() +
+  guides(color = "none", 
+         fill = "none") +
+  labs(
+    x = NULL,
+    y = "Number of instances",
+    title = "Most Common Words for South Park (Excl. Stop Words)")
+
+
+sp_lines_full_ngram |>
+  count(threegram, sort = TRUE) |>
+  slice(2:36) |> #NA for 1, annoying
+  ggplot(aes(x = fct_reorder(threegram, n), 
+             y = n, 
+             color = threegram, 
+             fill = threegram)) +
+  geom_col() +
+  coord_flip() +
+  guides(color = "none", 
+         fill = "none") +
+  labs(
+    x = NULL,
+    y = "Number of instances",
+    title = "Most Common ThreeGrams for South Park")
+
+
+```
+
+### Sentiment Analysis of South Park
+
+We analyzed
+
+```{r}
+#| label: Sentiment Analysis for South Park
+#| fig.align: left
+#| out.width: 100%
+
+sp_lines_filtered_sentiments|>
+  count(sentiment, sort = TRUE) |>
+  slice(1:10) |> #NA for 1, annoying
+  ggplot(aes(x = fct_reorder(sentiment, n), 
+             y = n, 
+             color = sentiment, #maybe important... bad words red, good words green?
+             fill = sentiment)) +
+  geom_col() +
+  coord_flip() +
+  guides(color = "none", 
+         fill = "none") +
+  labs(
+    x = NULL,
+    y = "Number of instances",
+    title = "Most Common Sentiments in South Park")
+
+mean(sp_lines_filtered_pos_neg$value)
+
+sp_characters %>%
+  kable(booktabs = TRUE, digits = 2, col.names = c(
+    "Character",
+    "Filtered Words",
+    "Unfiltered Words",
+    "% of all Filtered words",
+    "% of all Unfiltered words"
+  )) %>%
+  kable_styling()
+
+```
+
+### South Park by Character
+
+Each character is a key component
+
+```{r}
+#| label: Sentiments Based on Main Character for South Park
+#| fig.align: left
+#| out.width: 100%
+
+#facet so that this visualization is smaller!!!
+#also maybe using unfiltered words
+
+sp_lines_filtered |>
+  filter(Character == "Cartman") |> # to display a specific character's vocabulary
+  count(word, sort = TRUE) |>
+  slice(1:20) |>
+  ggplot(aes(x = fct_reorder(word, n), y = n, color = word, fill = word)) +
+  geom_col() +
+  # Rotate graph
+  coord_flip() +
+  guides(color = "none", 
+         fill = "none") +
+  labs(
+    # Remove x variable label; notice that although coordinates are flipped, 
+    # the labels correspond to which variables were specified 
+    # as `x` and `y` in `aes()`
+    x = NULL,
+    y = "Number of instances",
+    title = "The most common words said by Cartman in South Park")
+
+sp_lines_filtered_pos_neg %>%
+  filter(Character == "Cartman") %>%
+  summarize(mean_cartman = mean(value))
+
+
+
+sp_lines_filtered |>
+  filter(Character == "Kenny") |> # to display a specific character's vocabulary
+  count(word, sort = TRUE) |>
+  slice(1:20) |>
+  ggplot(aes(x = fct_reorder(word, n), y = n, color = word, fill = word)) +
+  geom_col() +
+  # Rotate graph
+  coord_flip() +
+  guides(color = "none", 
+         fill = "none") +
+  labs(
+    # Remove x variable label; notice that although coordinates are flipped, 
+    # the labels correspond to which variables were specified 
+    # as `x` and `y` in `aes()`
+    x = NULL,
+    y = "Number of instances",
+    title = "The most common words said by Kenny in South Park")
+
+sp_lines_filtered_pos_neg %>%
+  filter(Character == "Kenny") %>%
+  summarize(mean_kenny = mean(value))
+
+
+sp_lines_filtered |>
+  filter(Character == "Stan") |> # to display a specific character's vocabulary
+  count(word, sort = TRUE) |>
+  slice(1:20) |>
+  ggplot(aes(x = fct_reorder(word, n), y = n, color = word, fill = word)) +
+  geom_col() +
+  # Rotate graph
+  coord_flip() +
+  guides(color = "none", 
+         fill = "none") +
+  labs(
+    # Remove x variable label; notice that although coordinates are flipped, 
+    # the labels correspond to which variables were specified 
+    # as `x` and `y` in `aes()`
+    x = NULL,
+    y = "Number of instances",
+    title = "The most common words said by Stan in South Park")
+
+sp_lines_filtered_pos_neg %>%
+  filter(Character == "Stan") %>%
+  summarize(mean_stan = mean(value))
+
+
+
+
+sp_lines_filtered |>
+  filter(Character == "Kyle") |> # to display a specific character's vocabulary
+  count(word, sort = TRUE) |>
+  slice(1:20) |>
+  ggplot(aes(x = fct_reorder(word, n), y = n, color = word, fill = word)) +
+  geom_col() +
+  # Rotate graph
+  coord_flip() +
+  guides(color = "none", 
+         fill = "none") +
+  labs(
+    # Remove x variable label; notice that although coordinates are flipped, 
+    # the labels correspond to which variables were specified 
+    # as `x` and `y` in `aes()`
+    x = NULL,
+    y = "Number of instances",
+    title = "The most common words said by Kyle in South Park")
+
+sp_lines_filtered_pos_neg %>%
+  filter(Character == "Kyle") %>%
+  summarize(mean_kyle = mean(value))
+
+
+
+```
+
+
+## All three shows (should be on the top)
+
+All three shows for quick first analyses, and then comparative analyses
+
+
+```{r}
+#| label: EXAMPLE OF MOST COMMON WORDS IN THE THREE SHOWS
+#| fig.align: left
+#| out.width: 100%
+
+#need to find a nice way to facet all of these 
+
+gg_filtered |>
+  count(word, sort = TRUE) |>
+  slice(1:20) |>
+  # fct_reorder is used to re-order the axis (displaying the word) 
+  # by values of n (the number of times that word was used)
+  ggplot(aes(x = fct_reorder(word, n), 
+             y = n, 
+             color = word, 
+             fill = word)) +
+  geom_col() +
+  # Rotate graph
+  coord_flip() +
+  guides(color = "none", 
+         fill = "none") +
+  labs(
+    # Remove x variable label; notice that although coordinates are flipped, 
+    # the labels correspond to which variables were specified 
+    # as `x` and `y` in `aes()`
+    x = NULL,
+    y = "Number of instances",
+    title = "Most Common Words for Gilmore Girls (Excl. Stop Words)") 
+ # scale_color_brewer("Diamond\nclarity")
+
+euph_words |>
+  #filter(char == "KAT") |> # to display a specific character's vocabulary
+  count(word, sort = TRUE) |>
+  slice(1:20) |>
+  ggplot(aes(x = fct_reorder(word, n), y = n, color = word, fill = word)) +
+  geom_col() +
+  # Rotate graph
+  coord_flip() +
+  guides(color = "none", 
+         fill = "none") +
+  labs(
+    # Remove x variable label; notice that although coordinates are flipped, 
+    # the labels correspond to which variables were specified 
+    # as `x` and `y` in `aes()`
+    x = NULL,
+    y = "Number of instances",
+    title = "The most common words said in Euphoria")
+
+sp_lines_filtered |>
+  count(word, sort = TRUE) |>
+  slice(1:20) |>
+  ggplot(aes(x = fct_reorder(word, n), 
+             y = n, 
+             color = word, 
+             fill = word)) +
+  geom_col() +
+  coord_flip() +
+  guides(color = "none", 
+         fill = "none") +
+  labs(
+    x = NULL,
+    y = "Number of instances",
+    title = "Most Common Words for South Park (Excl. Stop Words)")
+
+```
+
+
+
+
+
+
+
+
+
+
+
 
 Examples and additional guidance are provided below. 
 
@@ -378,9 +675,7 @@ You can make a numbered list like this
 ::: {}
 ### Content Column 1
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse vel ipsum eu sem facilisis porttitor. Integer eu tristique lectus. Vestibulum nisi risus, porta sit amet cursus nec, auctor ac tellus. Integer egestas viverra rhoncus. Fusce id sem non ante vestibulum posuere ac sed lorem. Proin id felis a mi pellentesque viverra in at nulla. Duis augue nulla, aliquet ac ligula a, sagittis varius lorem.
-
-
+What makes a TV show popular? While that is a multifaceted question with no straightforward answer, we wanted to find similarities and differences between three vastly different successful TV shows (Gilmore Girls, Euphoria, South Park) to see what makes them so popular. We will be doing text and sentiment analysis, while also giving our own interpretations (as we have seen these shows) as to why these words / sentiments might resonate with viewers
 
 :::
 
@@ -394,7 +689,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse vel ipsum e
 
 ### Content Column 2
 
-Aliquam non ante et erat luctus hendrerit eu ac justo. Fusce lacinia pulvinar neque non laoreet. Fusce vitae mauris pharetra, scelerisque purus eget, pharetra nisl. Aenean volutpat elementum tortor vitae rhoncus. Phasellus nec tellus euismod neque congue imperdiet tincidunt in mauris. Morbi eu lorem molestie, hendrerit lorem nec, semper massa. Sed vulputate hendrerit ex, eget cursus purus. Pellentesque consequat erat leo, eleifend porttitor lacus porta at. Vivamus faucibus quam ipsum, id condimentum ligula malesuada ultrices. Nullam luctus leo elit, vitae rutrum nibh venenatis eget. Nam at sodales purus. Proin nulla tellus, lacinia eget pretium sed, vehicula aliquet neque. Morbi vel eros elementum, suscipit elit eu, consequat libero. Nulla nec aliquet neque. Nunc bibendum sapien lectus, sed elementum nisi rutrum non. Ut vulputate at lacus eget maximus.
+What makes a TV show popular? While that is a multifaceted question with no straightforward answer, we wanted to find similarities and differences between three vastly different successful TV shows (Gilmore Girls, Euphoria, South Park) to see what makes them so popular. We will be doing text and sentiment analysis, while also giving our own interpretations (as we have seen these shows) as to why these words / sentiments might resonate with viewers
 
 ```{r}
 #| out.width: 80%
