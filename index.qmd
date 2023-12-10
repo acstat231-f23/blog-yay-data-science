@@ -33,7 +33,7 @@ library(kableExtra)
 
 # Intro
 
-What makes a TV show popular? While that is a multifaceted question with no straightforward answer, we wanted to find similarities and differences between three vastly different successful TV shows (Gilmore Girls, Euphoria, South Park) to see what makes them so popular. We will be doing text and sentiment analysis, while also giving our own interpretations (as we have seen these shows) as to why these words / sentiments might resonate with viewers
+What makes a TV show popular? While that is a multifaceted question with no straightforward answer, we want to find similarities and differences between three vastly different and very successful TV shows (Gilmore Girls, Euphoria, South Park) to see what makes them so popular. To look into the why, we have done text and sentiment analysis of the scripts of these shows and contextualized these analyses with our own interpretations as to why these words and general sentiments might resonate with viewers. Having seen these shows, we are able to confirm whether the analyses accurately depict the essence and topics of the series. First, we had to webscrape these scripts and then we cleaned up the scripts and removed the stop words. We then performed the analyses to reach a conclusion about how and why such disparate TV shows are so appealing to the general public.
 
 # Content
 
