@@ -185,7 +185,10 @@ sp_lines_filtered |>
 
 ## Most Common Words
 EXPLAIN THIS
+
 ### Gilmore Girls
+
+Insert?
 
 ```{r}
 #| label: Gilmore Girls Most Common Words Visualization - Shani
@@ -422,7 +425,57 @@ euph_words |>
 ```
 
 ### South Park
-Insert 
+
+This is a bit different as in south park, we mainly revolve around these four characters (one of them barely speaks, but has a large cultural impact). So, this analysis is a bit different
+
+```{r}
+#| label: Sentiments Based on Main Character for South Park
+#| fig.align: left
+#| out.width: 100%
+
+#followed shani's code, except since kenny doesn't talk much (still main character), it's important to get him
+nb.cols <- 51 #R says it needs 51, so I edited it
+mycolors_sp <- colorRampPalette(brewer.pal(8, "Pastel1"))(nb.cols)
+
+
+sp_main_characters <- data.frame(Character  = c("Cartman", "Kenny", "Stan", "Kyle"))
+sp_char_names <- str_to_title(sp_main_characters[["Character"]])
+
+sp_lines_filtered |>
+  filter(str_to_title(Character) %in% sp_char_names) |> # to display a specific character's vocabulary
+  group_by(Character) |>
+  count(word, sort = TRUE) |>
+  slice(1:15) |>
+  ggplot(aes(x = fct_reorder(word, n), 
+             y = n, 
+             color = word, 
+             fill = as.factor(n))) +
+  geom_col() +
+  # Rotate graph
+  coord_flip() +
+  guides(color = "none", 
+         fill = "none") +
+  labs(
+    x = NULL,
+    y = "Number of instances",
+    title = "The most common words said by the four main boys in South Park") +
+  facet_wrap(facets = ~reorder(str_to_title(Character), -n), scales = "free_y") +
+  scale_fill_manual(values = mycolors_sp) + 
+  theme_light()
+  
+  
+sp_lines_filtered_pos_neg %>%
+  filter(str_to_title(Character) %in% sp_char_names) %>%
+  group_by(Character) %>%
+  summarize(mean = mean(value, na.rm = TRUE)) %>%
+  kable(booktabs = TRUE, digits = 3, col.names = c(
+    "Character",
+    "Overall Mean of Sentiment Throughout the show"
+  )) %>%
+  kable_styling()
+
+```
+
 
 ## Most Common Words by Sentiment 
 EXPLAIN THIS!
@@ -508,7 +561,7 @@ Insert
 
 sp_lines_filtered_sentiments|>
   count(sentiment, sort = TRUE) |>
-  slice(2:11) |> #NA for 1, annoying
+  slice(4:11) |> #1 is NA, 2 and 3 are pos/neg (which aren't really indicative of anything)
   ggplot(aes(x = fct_reorder(sentiment, n), 
              y = n, 
              color = sentiment, #maybe important... bad words red, good words green?
@@ -520,9 +573,11 @@ sp_lines_filtered_sentiments|>
   labs(
     x = NULL,
     y = "Number of instances",
-    title = "Most Common Sentiments in South Park")
+    title = "Most Common Sentiments in South Park") +
+  scale_fill_manual(values = mycolors) +
+  theme_light()
 
-mean(sp_lines_filtered_pos_neg$value, na.rm = TRUE)
+cat("The mean positivity value of South Park is", mean(sp_lines_filtered_pos_neg$value, na.rm = TRUE))
 
 sp_characters %>%
   kable(booktabs = TRUE, digits = 2, col.names = c(
@@ -536,129 +591,4 @@ sp_characters %>%
 
 ```
 
-
-
-### South Park by Character
-
-Each character is a key component
-
-```{r}
-#| label: Sentiments Based on Main Character for South Park
-#| fig.align: left
-#| out.width: 100%
-
-#followed shani's code, except since kenny doesn't talk much (still main character), it's important to get him
-nb.cols <- 51 #R says it needs 51, so I edited it
-mycolors_sp <- colorRampPalette(brewer.pal(8, "Pastel1"))(nb.cols)
-
-
-sp_main_characters <- data.frame(Character  = c("Cartman", "Kenny", "Stan", "Kyle"))
-sp_char_names <- str_to_title(sp_main_characters[["Character"]])
-
-sp_lines_filtered |>
-  filter(str_to_title(Character) %in% sp_char_names) |> # to display a specific character's vocabulary
-  group_by(Character) |>
-  count(word, sort = TRUE) |>
-  slice(1:15) |>
-  ggplot(aes(x = fct_reorder(word, n), 
-             y = n, 
-             color = word, 
-             fill = as.factor(n))) +
-  geom_col() +
-  # Rotate graph
-  coord_flip() +
-  guides(color = "none", 
-         fill = "none") +
-  labs(
-    x = NULL,
-    y = "Number of instances",
-    title = "The most common words said by the four main boys in South Park") +
-  facet_wrap(facets = ~reorder(str_to_title(Character), -n), scales = "free_y") +
-  scale_fill_manual(values = mycolors_sp) + 
-  theme_light()
-  
-  
-sp_lines_filtered_pos_neg %>%
-  filter(str_to_title(Character) %in% sp_char_names) %>%
-  group_by(Character) %>%
-  summarize(mean = mean(value, na.rm = TRUE)) %>%
-  kable(booktabs = TRUE, digits = 3, col.names = c(
-    "Character",
-    "Overall Mean of Sentiment Throughout the show"
-  )) %>%
-  kable_styling()
-
-```
-
-
-## All three shows (should be on the top)
-
-All three shows for quick first analyses, and then comparative analyses
-
-
-```{r}
-#| label: EXAMPLE OF MOST COMMON WORDS IN THE THREE SHOWS
-#| fig.align: left
-#| out.width: 100%
-
-#need to find a nice way to facet all of these 
-
-gg_filtered |>
-  count(word, sort = TRUE) |>
-  slice(1:20) |>
-  # fct_reorder is used to re-order the axis (displaying the word) 
-  # by values of n (the number of times that word was used)
-  ggplot(aes(x = fct_reorder(word, n), 
-             y = n, 
-             color = word, 
-             fill = word)) +
-  geom_col() +
-  # Rotate graph
-  coord_flip() +
-  guides(color = "none", 
-         fill = "none") +
-  labs(
-    # Remove x variable label; notice that although coordinates are flipped, 
-    # the labels correspond to which variables were specified 
-    # as `x` and `y` in `aes()`
-    x = NULL,
-    y = "Number of instances",
-    title = "Most Common Words for Gilmore Girls (Excl. Stop Words)") 
- # scale_color_brewer("Diamond\nclarity")
-
-euph_words |>
-  #filter(char == "KAT") |> # to display a specific character's vocabulary
-  count(word, sort = TRUE) |>
-  slice(1:20) |>
-  ggplot(aes(x = fct_reorder(word, n), y = n, color = word, fill = word)) +
-  geom_col() +
-  # Rotate graph
-  coord_flip() +
-  guides(color = "none", 
-         fill = "none") +
-  labs(
-    # Remove x variable label; notice that although coordinates are flipped, 
-    # the labels correspond to which variables were specified 
-    # as `x` and `y` in `aes()`
-    x = NULL,
-    y = "Number of instances",
-    title = "The most common words said in Euphoria")
-
-sp_lines_filtered |>
-  count(word, sort = TRUE) |>
-  slice(1:20) |>
-  ggplot(aes(x = fct_reorder(word, n), 
-             y = n, 
-             color = word, 
-             fill = word)) +
-  geom_col() +
-  coord_flip() +
-  guides(color = "none", 
-         fill = "none") +
-  labs(
-    x = NULL,
-    y = "Number of instances",
-    title = "Most Common Words for South Park (Excl. Stop Words)")
-
-```
 
