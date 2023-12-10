@@ -57,6 +57,7 @@ load(file="sp_characters.Rdata")
 
 
 ##Summaries of Each Show
+IN EACH SECTION PUT 2-3 SENTENCES ABOUT EACH SHOW LIKE INFO ABOUT WHEN IT WAS MADE, SUMMARIES, HOW MANY SEASONS/EPISODES
 
 ###Gilmore Girls
 Gilmore girls is a ____
@@ -68,8 +69,121 @@ Euphoria is a ____
 South Park is a ____
 
 
-## Most Common Words
+## Faceting Formatting of Most Common Words
 
+<!-- Begin columns environment -->
+:::::: {style="display: flex; font-size: large;"}
+
+<!-- Create a column -->
+::: {}
+### Gilmore Girls
+
+```{r}
+#| label: faceted Most Common Words in Gilmore Girls
+#| fig.align: left
+#| out.width: 100%
+#Gilmore Girls Most Common Words Visualization - Shani
+
+#Customizing color palette
+nb.cols <- 20
+mycolors <- colorRampPalette(brewer.pal(8, "Pastel1"))(nb.cols)
+
+#plotting with palette for top 20 words by count 
+#excluding stop words and keeping words without the positivity ranking
+gg_filtered|>
+  count(word, sort = TRUE) |>
+  slice(1:20) |>
+  #fct_reorder to descending order it
+  ggplot(aes(x = fct_reorder(word, n), 
+             y = n, 
+             fill = as.factor(n))) +
+  geom_col() +
+  # Rotate graph
+  coord_flip() +
+  guides(fill = "none") +
+  labs(
+    x = NULL,
+    y = "Number of instances",
+    title = "Most Common Words for Gilmore Girls (Excl. Stop Words)") +
+  scale_fill_manual(values = mycolors) +
+  theme_light()
+```
+:::
+
+<!-- Create another column (this one is just adding horizontal space to separate content) -->
+::: {}
+<div class="horizontalgap" style="width:40px"></div>
+:::
+
+<!-- Create another column -->
+::: {}
+
+### Euphoria
+
+```{r}
+#| label: faceted Most Common Words in Euphoria
+#| fig.align: left
+#| out.width: 100%
+euph_words |>
+  #filter(char == "KAT") |> # to display a specific character's vocabulary
+  count(word, sort = TRUE) |>
+  slice(1:20) |>
+  ggplot(aes(x = fct_reorder(word, n), y = n, color = word, fill = word)) +
+  geom_col() +
+  # Rotate graph
+  coord_flip() +
+  guides(color = "none", 
+         fill = "none") +
+  labs(
+    # Remove x variable label; notice that although coordinates are flipped, 
+    # the labels correspond to which variables were specified 
+    # as `x` and `y` in `aes()`
+    x = NULL,
+    y = "Number of instances",
+    title = "The most common words said in Euphoria") +
+  theme_classic()
+```
+
+:::
+
+::: {}
+<div class="horizontalgap" style="width:40px"></div>
+:::
+
+::: {}
+### South Park 
+
+```{r}
+#| label: faceted Most Common Words in South Park
+#| fig.align: left
+#| out.width: 100%
+sp_lines_filtered |>
+  count(word, sort = TRUE) |>
+  slice(1:35) |>
+  ggplot(aes(x = fct_reorder(word, n), 
+             y = n, 
+             color = word, 
+             fill = word)) +
+  geom_col() +
+  coord_flip() +
+  guides(color = "none", 
+         fill = "none") +
+  labs(
+    x = NULL,
+    y = "Number of instances",
+    title = "Most Common Words for South Park (Excl. Stop Words)")+
+  theme_classic()
+```
+
+:::
+
+::::::
+<!-- End columns environment with matching length indicator-->
+
+
+
+## Most Common Words
+EXPLAIN THIS
 ### Gilmore Girls
 
 ```{r}
@@ -168,6 +282,7 @@ sp_lines_full_ngram |>
 ```
 
 ## By Top 5 Characters
+EXPLAIN TOP 5 CHARACTERS
 
 ### Gilmore Girls
 ```{r}
@@ -309,8 +424,10 @@ euph_words |>
 Insert 
 
 ## Most Common Words by Sentiment 
+EXPLAIN THIS!
 
 ###Gilmore Girls
+
 ```{r}
 #| label: EXAMPLE OF SENTIMENT ANALYSIS IN GILMORE GIRLS
 #| fig.align: left
@@ -346,6 +463,7 @@ Insert
 Insert 
 
 ## Sentiment Analysis
+EXPLAIN OUR SENTIMENT ANALYSIS
 
 ###Gilmore Girls
 ```{r}
@@ -751,106 +869,6 @@ You can make a numbered list like this
 1. First thing I want to say
 2. Second thing I want to say
 3. Third thing I want to say
-
-
-
-## Column formatting
-
-<!-- Begin columns environment -->
-:::::: {style="display: flex; font-size: large;"}
-
-<!-- Create a column -->
-::: {}
-### Content Column 1
-
-```{r}
-#Gilmore Girls Most Common Words Visualization - Shani
-
-#Customizing color palette
-nb.cols <- 20
-mycolors <- colorRampPalette(brewer.pal(8, "Pastel1"))(nb.cols)
-
-#plotting with palette for top 20 words by count 
-#excluding stop words and keeping words without the positivity ranking
-gg_filtered|>
-  count(word, sort = TRUE) |>
-  slice(1:20) |>
-  #fct_reorder to descending order it
-  ggplot(aes(x = fct_reorder(word, n), 
-             y = n, 
-             fill = as.factor(n))) +
-  geom_col() +
-  # Rotate graph
-  coord_flip() +
-  guides(fill = "none") +
-  labs(
-    x = NULL,
-    y = "Number of instances",
-    title = "Most Common Words for Gilmore Girls (Excl. Stop Words)") +
-  scale_fill_manual(values = mycolors) +
-  theme_light()
-```
-:::
-
-<!-- Create another column (this one is just adding horizontal space to separate content) -->
-::: {}
-<div class="horizontalgap" style="width:60px"></div>
-:::
-
-<!-- Create another column -->
-::: {}
-
-### Content Column 2
-
-```{r}
-euph_words |>
-  #filter(char == "KAT") |> # to display a specific character's vocabulary
-  count(word, sort = TRUE) |>
-  slice(1:20) |>
-  ggplot(aes(x = fct_reorder(word, n), y = n, color = word, fill = word)) +
-  geom_col() +
-  # Rotate graph
-  coord_flip() +
-  guides(color = "none", 
-         fill = "none") +
-  labs(
-    # Remove x variable label; notice that although coordinates are flipped, 
-    # the labels correspond to which variables were specified 
-    # as `x` and `y` in `aes()`
-    x = NULL,
-    y = "Number of instances",
-    title = "The most common words said in Euphoria")
-
-sp_lines_filtered |>
-  count(word, sort = TRUE) |>
-  slice(1:20) |>
-  ggplot(aes(x = fct_reorder(word, n), 
-             y = n, 
-             color = word, 
-             fill = word)) +
-  geom_col() +
-  coord_flip() +
-  guides(color = "none", 
-         fill = "none") +
-  labs(
-    x = NULL,
-    y = "Number of instances",
-    title = "Most Common Words for South Park (Excl. Stop Words)")
-```
-
-```{r}
-#| out.width: 80%
-#| fig.align: right
-mtcars |>
-  ggplot(aes(x = wt, y = mpg)) +
-  geom_point()
-```
-
-:::
-::::::
-<!-- End columns environment with matching length indicator-->
-
-
 
 
 # Customizing your blog design
