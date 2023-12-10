@@ -137,12 +137,10 @@ save(euph_words, file = "euph_words.Rdata")
 euph_words |>
   count(word, sort = TRUE) |>
   slice(1:20) |>
-  ggplot(aes(x = fct_reorder(word, n), y = n, color = word, fill = word)) +
-  geom_col() +
+  ggplot(aes(x = fct_reorder(word, n), y = n)) +
+  geom_col(color = "blue", fill = "lightblue") +
   # Rotate graph
   coord_flip() +
-  guides(color = "none", 
-         fill = "none") +
   labs(
     # Remove x variable label; notice that although coordinates are flipped, 
     # the labels correspond to which variables were specified 
@@ -219,11 +217,10 @@ euph_words |>
   count(word, sort = TRUE) |>
   inner_join(pos_neg_val_sentiment, by = "word") |>
   slice(1:20) |>
-  ggplot(aes(x = fct_reorder(word, n), y = n, color = as.factor(value), fill = as.factor(value))) +
+  ggplot(aes(x = fct_reorder(word, n), y = n, fill = as.factor(value))) +
   geom_col() +
   # Rotate graph
   coord_flip() +
-  scale_color_brewer(palette = "RdYlGn") +
   scale_fill_brewer(palette = "RdYlGn") +
   guides(
     color = guide_legend(reverse = TRUE), 
@@ -234,7 +231,6 @@ euph_words |>
     # as `x` and `y` in `aes()`
     x = NULL,
     y = "Number of instances",
-    color = "Positivity rating",
     fill = "Positivity rating",
     title = "The most common positivity-rated words said in Euphoria")
 ```
