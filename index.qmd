@@ -33,7 +33,7 @@ library(kableExtra)
 
 # Intro
 
-What makes a TV show popular? While that is a multifaceted question with no straightforward answer, we want to find similarities and differences between three vastly different and very successful TV shows (Gilmore Girls, Euphoria, South Park) to see what makes them so popular. To look into the why, we have done text and sentiment analysis of the scripts of these shows and contextualized these analyses with our own interpretations as to why these words and general sentiments might resonate with viewers. Having seen these shows, we are able to confirm whether the analyses accurately depict the essence and topics of the series. First, we had to webscrape these scripts and then we cleaned up the scripts and removed the stop words. We then performed the analyses to reach a conclusion about how and why such disparate TV shows are so appealing to the general public.
+What makes a TV show popular? While that is a multifaceted question with no straightforward answer, we want to find similarities and differences between three vastly different and very successful TV shows (Gilmore Girls, Euphoria, South Park) to see what makes them so popular. To look into the "why," we have done text and sentiment analysis of the scripts of these shows and contextualized these analyses with our own interpretations as to why these words and general sentiments might resonate with viewers. Having seen these shows, we are able to confirm whether the analyses accurately depict the essence and topics of the series. First, we had to webscrape these scripts and then we cleaned up the scripts and removed the stop words. We then performed the analyses to reach a conclusion about how and why such disparate TV shows are so appealing to the general public.
 
 # Content
 
@@ -63,7 +63,7 @@ IN EACH SECTION PUT 2-3 SENTENCES ABOUT EACH SHOW LIKE INFO ABOUT WHEN IT WAS MA
 Gilmore girls is a ____
 
 ###Euphoria
-Euphoria is a ____
+Euphoria is a teen drama series known for its graphic depiction of mature topics, especially sexual abuse and drug use, as well as its focus on cinematography and scoring. It follows the lives of Rue and her high-school classmates as they navigate a variety of challenges from self-confidence and sexuality issues to addiction, grief, and abuse.The show's distinct visual style targets and portrays Gen Z in a way that has significantly influenced trends in fashion, makeup, and social media.
 
 ###South Park
 South Park is a sitcom infamous for its exploration on offensive and controversial topics in a satirical fashion. The show centers around four fourth-graders ((Eric) Cartman, Kyle, Stan, Kenny) and their adventures. (ADD REASON WHY IT'S POPULAR) 
@@ -517,7 +517,28 @@ gg_filtered|>
 ```
 
 ### Euphoria
-Insert
+```{r}
+euph_words |>
+  count(word, sort = TRUE) |>
+  inner_join(pos_neg_val_sentiment, by = "word") |>
+  slice(1:20) |>
+  ggplot(aes(x = fct_reorder(word, n), y = n, fill = as.factor(value))) +
+  geom_col() +
+  # Rotate graph
+  coord_flip() +
+  scale_fill_brewer(palette = "RdYlGn") +
+  guides(
+    color = guide_legend(reverse = TRUE), 
+    fill = guide_legend(reverse = TRUE)) +
+  labs(
+    # Remove x variable label; notice that although coordinates are flipped, 
+    # the labels correspond to which variables were specified 
+    # as `x` and `y` in `aes()`
+    x = NULL,
+    y = "Number of instances",
+    fill = "Positivity rating",
+    title = "The most common positivity-rated words said in Euphoria")
+```
 
 ### South Park
 Insert 
@@ -557,7 +578,26 @@ cat("The mean positivity value of Gilmore Girls is", mean(gg_filtered_pos_neg$va
 ```
 
 ### Euphoria
-Insert
+```{r}
+euph_sentiments |>
+  filter(sentiment != "positive" & sentiment != "negative") |>
+  count(sentiment, sort = TRUE) |>
+  slice(1:10) |>
+  ggplot(aes(x = fct_reorder(sentiment, n), 
+             y = n, 
+             color = sentiment, #maybe important... bad words red, good words green?
+             fill = sentiment)) +
+  geom_col() +
+  coord_flip() +
+  guides(color = "none", 
+         fill = "none") +
+  labs(
+    x = NULL,
+    y = "Number of instances",
+    title = "Most Common Sentiments in Euphoria")
+
+cat("The mean positivity value of Euphoria is", mean(euph_pos_neg$value))
+```
 
 ### South Park
 ```{r}
