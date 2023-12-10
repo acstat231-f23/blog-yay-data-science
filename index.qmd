@@ -124,11 +124,14 @@ gg_filtered|>
 #| label: faceted Most Common Words in Euphoria
 #| fig.align: left
 #| out.width: 100%
+
+nb.cols <- 20
+mycolors <- colorRampPalette(brewer.pal(9, "BuPu"))(nb.cols)
+
 euph_words |>
-  #filter(char == "KAT") |> # to display a specific character's vocabulary
   count(word, sort = TRUE) |>
   slice(1:20) |>
-  ggplot(aes(x = fct_reorder(word, n), y = n, color = word, fill = word)) +
+  ggplot(aes(x = fct_reorder(word, n), y = n, fill = as.factor(n))) +
   geom_col() +
   # Rotate graph
   coord_flip() +
@@ -141,6 +144,7 @@ euph_words |>
     x = NULL,
     y = "Number of instances",
     title = "The most common words said in Euphoria (Excl Stop Words)") +
+  scale_fill_manual(values = mycolors) +
   theme_classic()
 ```
 
@@ -157,17 +161,19 @@ euph_words |>
 #| label: faceted Most Common Words in South Park
 #| fig.align: left
 #| out.width: 100%
+
+nb.cols <- 20
+mycolors <- colorRampPalette(brewer.pal(6, "Set1"))(nb.cols)
+
 sp_lines_filtered |>
   count(word, sort = TRUE) |>
   slice(1:20) |>
   ggplot(aes(x = fct_reorder(word, n), 
-             y = n, 
-             color = word, 
+             y = n,
              fill = as.factor(n))) +
   geom_col() +
   coord_flip() +
-  guides(color = "none", 
-         fill = "none") +
+  guides(fill = "none") +
   labs(
     x = NULL,
     y = "Number of instances",
