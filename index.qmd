@@ -675,8 +675,7 @@ You can make a numbered list like this
 ::: {}
 ### Content Column 1
 
-What makes a TV show popular? While that is a multifaceted question with no straightforward answer, we wanted to find similarities and differences between three vastly different successful TV shows (Gilmore Girls, Euphoria, South Park) to see what makes them so popular. We will be doing text and sentiment analysis, while also giving our own interpretations (as we have seen these shows) as to why these words / sentiments might resonate with viewers
-
+PUT PLOT 1
 :::
 
 <!-- Create another column (this one is just adding horizontal space to separate content) -->
@@ -686,7 +685,7 @@ What makes a TV show popular? While that is a multifaceted question with no stra
 
 <!-- Create another column -->
 ::: {}
-
+PUT PLOT 2
 ### Content Column 2
 
 What makes a TV show popular? While that is a multifaceted question with no straightforward answer, we wanted to find similarities and differences between three vastly different successful TV shows (Gilmore Girls, Euphoria, South Park) to see what makes them so popular. We will be doing text and sentiment analysis, while also giving our own interpretations (as we have seen these shows) as to why these words / sentiments might resonate with viewers
