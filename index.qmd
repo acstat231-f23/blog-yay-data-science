@@ -66,7 +66,7 @@ Gilmore girls is a ____
 Euphoria is a ____
 
 ###South Park
-South Park is a ____
+South Park is a sitcom infamous for its exploration on offensive and controversial topics in a satirical fashion. The show centers around four fourth-graders ((Eric) Cartman, Kyle, Stan, Kenny) and their adventures. (ADD REASON WHY IT'S POPULAR) 
 
 
 ## Faceting Formatting of Most Common Words
@@ -140,7 +140,7 @@ euph_words |>
     # as `x` and `y` in `aes()`
     x = NULL,
     y = "Number of instances",
-    title = "The most common words said in Euphoria") +
+    title = "The most common words said in Euphoria (Excl Stop Words)") +
   theme_classic()
 ```
 
@@ -159,11 +159,11 @@ euph_words |>
 #| out.width: 100%
 sp_lines_filtered |>
   count(word, sort = TRUE) |>
-  slice(1:35) |>
+  slice(1:20) |>
   ggplot(aes(x = fct_reorder(word, n), 
              y = n, 
              color = word, 
-             fill = word)) +
+             fill = as.factor(n))) +
   geom_col() +
   coord_flip() +
   guides(color = "none", 
@@ -171,8 +171,9 @@ sp_lines_filtered |>
   labs(
     x = NULL,
     y = "Number of instances",
-    title = "Most Common Words for South Park (Excl. Stop Words)")+
-  theme_classic()
+    title = "Most Common Words for South Park (Excl. Stop Words)") +
+  scale_fill_manual(values = mycolors) + 
+  theme_light()
 ```
 
 :::
@@ -249,7 +250,7 @@ euph_words |>
 
 sp_lines_filtered |>
   count(word, sort = TRUE) |>
-  slice(1:35) |>
+  slice(1:20) |>
   ggplot(aes(x = fct_reorder(word, n), 
              y = n, 
              color = word, 
@@ -266,7 +267,7 @@ sp_lines_filtered |>
 
 sp_lines_full_ngram |>
   count(threegram, sort = TRUE) |>
-  slice(2:36) |> #NA for 1, annoying
+  slice(2:6) |> #NA for 1, annoying
   ggplot(aes(x = fct_reorder(threegram, n), 
              y = n, 
              color = threegram, 
@@ -507,7 +508,7 @@ Insert
 
 sp_lines_filtered_sentiments|>
   count(sentiment, sort = TRUE) |>
-  slice(1:10) |> #NA for 1, annoying
+  slice(2:11) |> #NA for 1, annoying
   ggplot(aes(x = fct_reorder(sentiment, n), 
              y = n, 
              color = sentiment, #maybe important... bad words red, good words green?
@@ -521,7 +522,7 @@ sp_lines_filtered_sentiments|>
     y = "Number of instances",
     title = "Most Common Sentiments in South Park")
 
-mean(sp_lines_filtered_pos_neg$value)
+mean(sp_lines_filtered_pos_neg$value, na.rm = TRUE)
 
 sp_characters %>%
   kable(booktabs = TRUE, digits = 2, col.names = c(
@@ -546,104 +547,46 @@ Each character is a key component
 #| fig.align: left
 #| out.width: 100%
 
-#facet so that this visualization is smaller!!!
-#also maybe using unfiltered words
+#followed shani's code, except since kenny doesn't talk much (still main character), it's important to get him
+nb.cols <- 51 #R says it needs 51, so I edited it
+mycolors_sp <- colorRampPalette(brewer.pal(8, "Pastel1"))(nb.cols)
+
+
+sp_main_characters <- data.frame(Character  = c("Cartman", "Kenny", "Stan", "Kyle"))
+sp_char_names <- str_to_title(sp_main_characters[["Character"]])
 
 sp_lines_filtered |>
-  filter(Character == "Cartman") |> # to display a specific character's vocabulary
+  filter(str_to_title(Character) %in% sp_char_names) |> # to display a specific character's vocabulary
+  group_by(Character) |>
   count(word, sort = TRUE) |>
-  slice(1:20) |>
-  ggplot(aes(x = fct_reorder(word, n), y = n, color = word, fill = word)) +
+  slice(1:15) |>
+  ggplot(aes(x = fct_reorder(word, n), 
+             y = n, 
+             color = word, 
+             fill = as.factor(n))) +
   geom_col() +
   # Rotate graph
   coord_flip() +
   guides(color = "none", 
          fill = "none") +
   labs(
-    # Remove x variable label; notice that although coordinates are flipped, 
-    # the labels correspond to which variables were specified 
-    # as `x` and `y` in `aes()`
     x = NULL,
     y = "Number of instances",
-    title = "The most common words said by Cartman in South Park")
-
+    title = "The most common words said by the four main boys in South Park") +
+  facet_wrap(facets = ~reorder(str_to_title(Character), -n), scales = "free_y") +
+  scale_fill_manual(values = mycolors_sp) + 
+  theme_light()
+  
+  
 sp_lines_filtered_pos_neg %>%
-  filter(Character == "Cartman") %>%
-  summarize(mean_cartman = mean(value))
-
-
-
-sp_lines_filtered |>
-  filter(Character == "Kenny") |> # to display a specific character's vocabulary
-  count(word, sort = TRUE) |>
-  slice(1:20) |>
-  ggplot(aes(x = fct_reorder(word, n), y = n, color = word, fill = word)) +
-  geom_col() +
-  # Rotate graph
-  coord_flip() +
-  guides(color = "none", 
-         fill = "none") +
-  labs(
-    # Remove x variable label; notice that although coordinates are flipped, 
-    # the labels correspond to which variables were specified 
-    # as `x` and `y` in `aes()`
-    x = NULL,
-    y = "Number of instances",
-    title = "The most common words said by Kenny in South Park")
-
-sp_lines_filtered_pos_neg %>%
-  filter(Character == "Kenny") %>%
-  summarize(mean_kenny = mean(value))
-
-
-sp_lines_filtered |>
-  filter(Character == "Stan") |> # to display a specific character's vocabulary
-  count(word, sort = TRUE) |>
-  slice(1:20) |>
-  ggplot(aes(x = fct_reorder(word, n), y = n, color = word, fill = word)) +
-  geom_col() +
-  # Rotate graph
-  coord_flip() +
-  guides(color = "none", 
-         fill = "none") +
-  labs(
-    # Remove x variable label; notice that although coordinates are flipped, 
-    # the labels correspond to which variables were specified 
-    # as `x` and `y` in `aes()`
-    x = NULL,
-    y = "Number of instances",
-    title = "The most common words said by Stan in South Park")
-
-sp_lines_filtered_pos_neg %>%
-  filter(Character == "Stan") %>%
-  summarize(mean_stan = mean(value))
-
-
-
-
-sp_lines_filtered |>
-  filter(Character == "Kyle") |> # to display a specific character's vocabulary
-  count(word, sort = TRUE) |>
-  slice(1:20) |>
-  ggplot(aes(x = fct_reorder(word, n), y = n, color = word, fill = word)) +
-  geom_col() +
-  # Rotate graph
-  coord_flip() +
-  guides(color = "none", 
-         fill = "none") +
-  labs(
-    # Remove x variable label; notice that although coordinates are flipped, 
-    # the labels correspond to which variables were specified 
-    # as `x` and `y` in `aes()`
-    x = NULL,
-    y = "Number of instances",
-    title = "The most common words said by Kyle in South Park")
-
-sp_lines_filtered_pos_neg %>%
-  filter(Character == "Kyle") %>%
-  summarize(mean_kyle = mean(value))
-
-
+  filter(str_to_title(Character) %in% sp_char_names) %>%
+  group_by(Character) %>%
+  summarize(mean = mean(value, na.rm = TRUE)) %>%
+  kable(booktabs = TRUE, digits = 3, col.names = c(
+    "Character",
+    "Overall Mean of Sentiment Throughout the show"
+  )) %>%
+  kable_styling()
 
 ```
 
@@ -718,254 +661,4 @@ sp_lines_filtered |>
     title = "Most Common Words for South Park (Excl. Stop Words)")
 
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-Examples and additional guidance are provided below. 
-
-Take note of the the default code chunk options in the `setup` code chunk. For example, unlike the rest of the qmd files we worked in this semester, the default code chunk option is `echo = FALSE`, so you will need to set `echo  = TRUE` for any code chunks you would like to display in the blog. You should be thoughtful and intentional about the code you choose to display. 
-
-
-## Links 
-
-You can include [links](https://www.datadreaming.org/post/r-markdown-theme-gallery/) using Markdown syntax as shown. 
-
-You should include links to relevant sites as you write. You should additionally include a list of references as the end of your blog with full citations (and relevant links).
-
-
-## Visualizations 
-
-Visualizations, particularly interactive ones, will be well-received. That said, do not overuse visualizations. You may be better off with one complicated but well-crafted visualization as opposed to many quick-and-dirty plots. Any plots should be well-thought-out, properly labeled, informative, and visually appealing.
-
-If you want to include dynamic visualizations or tables, you should explore your options from packages that are built from [**htmlwidgets**](https://www.htmlwidgets.org/showcase_leaflet.html). These **htmlwidgets**-based packages offer ways to build lighterweight, dynamic visualizations or tables that don't require an R server to run! A more complete list of packages is available on the linked website, but a short list includes:
-
-* [**plotly**](https://plot.ly/r/): Interactive graphics with D3
-* [**leaflet**](https://rstudio.github.io/leaflet/): Interactive maps with OpenStreetMap
-* [**dygraphs**](http://rstudio.github.io/dygraphs): Interactive time series visualization
-* [**visNetwork**](http://dataknowledge.github.io/visNetwork): Network graph visualization vis.js
-* [**sparkline**](https://github.com/htmlwidgets/sparkline): Small inline charts
-* [**threejs**](https://github.com/bwlewis/rthreejs): Interactive 3D graphics
-    
-You may embed a published Shiny app in your blog if useful, but be aware that there is a limited window size for embedded objects, which tends to makes the user experience of the app worse relative to a dedicated Shiny app page. Additionally, Shiny apps will go idle after a few minutes and have to be reloaded by the user, which may also affect the user experience. 
-
-Any Shiny apps embedded in your blog should be accompanied by the link to the published Shiny app (I did this using a figure caption in the code chunk below, but you don't have to incorporate the link in this way).
-
-```{r}
-#| label: ds-salaries-app
-#| out.width: "100%"
-
-knitr::include_app("https://bebailey.shinyapps.io/data-science-salaries",
-                   height = "500px")
-```
-
-
-## Tables
-
-### **DT** package
-
-The [**DT** package](https://rstudio.github.io/DT/) is great for making dynamic tables that can be displayed, searched, and filtered by the user without needing an R server or Shiny app!
-
-Note: you should load any packages you use in the `setup` code chunk as usual. The `library()` functions are shown below just for demonstration.
-
-```{r}
-#| label: dt-example
-#| message: false
-#| echo: true
-
-library(DT)
-mtcars |>
-  select(mpg, cyl, hp) |>
-  datatable(colnames = c("MPG", "Number of cylinders", "Horsepower"),
-            filter = 'top',
-            options = list(pageLength = 10, autoWidth = TRUE))
-```
-
-### **kableExtra** package
-
-You can also use [**kableExtra**](https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html) for customizing HTML tables.
-
-```{r}
-#| label: kable-example
-#| echo: true
-#| message: false
-
-library(kableExtra)
-summary(cars) |>
-  kbl(col.names = c("Speed", "Distance"), row.names = FALSE) |>
-  kable_styling(bootstrap_options = "striped", full_width = FALSE) |>
-  row_spec(0, bold = TRUE) |>
-  column_spec(1:2, width = "1.5in") 
-```
-
-
-## Images
-
-Images and gifs can be displayed using code chunks:
-
-```{r}
-#| fig.cap: '"Safe Space" by artist Kenesha Sneed'
-#| out.width: 80%
-#| fig.align: center
-
-knitr::include_graphics("img/Kenesha-Sneed_safe-space.jpeg")
-```
-
-
-```{r}
-#| fig.cap: "This is a figure caption"
-#| out.width: 50%
-#| fig.align: center
-knitr::include_graphics("https://media.giphy.com/media/H7ZrrA9V2pd3Tehdds/giphy.gif")
-```
-
-You may also use Markdown syntax for displaying images as shown below, but code chunks offer easier customization of the image size and alignment.
-
-![This is another figure caption](https://media.giphy.com/media/8i5IvxP9ZLgmjXN1BF/giphy.gif)
-
-Either way, the file path can be a local path within your project directory or a URL for an image hosted online. This syntax works for PNG, PDF, JPG, and even GIF formats.
-
-
-## Equations
-
-You might include equations if part of the purpose of your blog is to explain a statistical method. There are two ways to include equations:
-
-* Inline: $b \sim N(0, \sigma^2_b)$
-* Display-style (displayed on its own line): 
-$$\frac{\sigma^2_b}{\sigma^2_b + \sigma^2_e}$$
-
-For typesetting equations appropriately, check out the [AMS-LaTeX quick reference](https://github.com/manuelemacchia/math-latex/blob/master/amsmath.pdf) or take a look at the *Symbols in math mode* section of this  [cheat sheet](https://users.dickinson.edu/~richesod/latex/latexcheatsheet.pdf)  (or do some extra Googling---there are *many* resources).
-
-
-
-# Formatting
-
-## Tabbed subsections {.tabset}
-
-Each subsection below the "Tabbed subsections" section heading will appear in a tab. See R Markdown Cookbook [Section 7.6: Put content in tabs](https://bookdown.org/yihui/rmarkdown-cookbook/html-tabs.html) for additional customization options. 
-
-### Bulleted list
-
-You can make a bulleted list like this:
-
-* item 1
-* item 2
-* item 3
-
-
-### Numbered list
-
-
-You can make a numbered list like this
-
-1. First thing I want to say
-2. Second thing I want to say
-3. Third thing I want to say
-
-
-# Customizing your blog design
-
-
-As a *final* detail **only** if you have time, you can explore options for customizing the style of your blog. By default, we are using the `cosmo` theme from Bootswatch themes (see Line 7 of this file if you want to switch out themes). 
-
-
-## Theme
-
-There are 25 Bootswatch themes included with Quarto. You can change the theme easily by specifying one of these themes on Line 7: 
-
-- default  
-- cerulean  
-- cosmo  
-- cyborg  
-- darkly  
-- flatly  
-- journal  
-- litera  
-- lumen  
-- lux  
-- materia  
-- minty  
-- morph  
-- pulse  
-- quartz  
-- sandstone  
-- simplex  
-- sketchy  
-- slate  
-- solar  
-- spacelab  
-- superhero  
-- united  
-- vapor  
-- yeti  
-- zephyr
-
-There are, I'm sure, many more similar packages with built in themes, or you can look into how to include a CSS code chunk to customize aspects of a theme.  
-
-## Synax highlighting
-
-You can also change the code chunk syntax highlighting option (Line 7, `highlight`): 
-
-* `"default"`
-* `"tango"`
-* `"pygments"`
-* `"kate"`
-* `"monochrome"`
-* `"espresso"`
-* `"zenburn"`
-* `"haddock"`
-* `"textmate"` 
-* `NULL` for no syntax highlighting (not recommended)
-
-## Font size, type, and other customization
-
-Further customization requires adding a CSS style file or code chunk or incorporating other development options. Further customization should be your lowest and final priority for the project. Ensure your content is fully prepared first.
-
-
-# References
-
-All data sources, any key R packages, and any other sources used in developing your blog should be cited in full in a list of references at the end of your blog. Your blog post should also link to these sources as they are discussed. You may choose any reference style as long as sources are fully cited (try to be consistent!).
-
-Typically, references in R Markdown (and LaTeX) files are [incorporated with a BibTeX database](https://bookdown.org/yihui/rmarkdown-cookbook/bibliography.html) (a .bib file). You can try this approach or manually include either a numbered or alphabetized list. 
-
-Columbia University has compiled some guidance on [how to cite data](https://guides.library.columbia.edu/datacitation). Some data sources will give you the citation information to copy and paste. Use the provided citations or citation styles in those cases.
-
-You can list R package citations with the code `citation("packageName")` in the console and then copy (and reformat as needed) the relevant text, e.g.,
-```{r}
-citation("DT")
-```
-
-The following citations are based on the American Statistical Association citation style (not all of these references are used in this document).:
-
-
-<!-- Textbook -->
-Baumer, B. S., Kaplan, D. T., and Horton, N. J. (2021), *Modern Data Science with R* (2nd ed.), Boca Raton, FL: CRC Press.
-
-<!-- Journal article -->
-Broman, K. W. and Woo, K. H. (2018), "Data Organization in Spreadsheets," *The American Statistician*, 72:1, 2-10, doi: [10.1080/00031305.2017.1375989](https://doi.org/10.1080/00031305.2017.1375989)
-
-<!-- Website -->
-Columbia University Libraries (n.d.), "Data Citation," available at <https://guides.library.columbia.edu/datacitation>.
-
-<!-- Journal article -->
-McNamara, A. and Horton N. J. (2018) "Wrangling Categorical Data in R," *The American Statistician*, 72:1, 97-104, doi: [10.1080/00031305.2017.1356375](https://doi.org/10.1080/00031305.2017.1356375).
-
-<!-- Dataset -->
-Shah, Syed A. A. (October 2022), "Starbucks Drinks" (Version 1), *Kaggle*, available at <https://www.kaggle.com/datasets/syedasimalishah/starbucks-drinks>.
-
-<!-- R package -->
-Xie Y, Cheng J, Tan X (2022). "DT: A Wrapper of the JavaScript Library 'DataTables'," R package version 0.24, available at <https://CRAN.R-project.org/package=DT>.
-  
-
-
- 
-
 
