@@ -35,15 +35,6 @@ library(kableExtra)
 
 What makes a TV show popular? While that is a multifaceted question with no straightforward answer, we wanted to find similarities and differences between three vastly different successful TV shows (Gilmore Girls, Euphoria, South Park) to see what makes them so popular. We will be doing text and sentiment analysis, while also giving our own interpretations (as we have seen these shows) as to why these words / sentiments might resonate with viewers
 
-## Website publication work flow
-
-1. Edit qmd
-
-2. Knit to HTML to view progress. You may need to click "Open in Browser" for some content to show (sometimes content won't show until you actually push your changes to GitHub and view the published website).
-
-3. Commit and push changes when you are ready. The website may take a couple minutes to update automatically after the push, but you may need to clear your browser's cache or view the page in a private/incognito window to see the changes more quickly. 
-
-
 # Content
 
 You can include text, `code`, and output as usual. Remember to take full advantage of Markdown and its [syntax shortcuts](https://www.markdownguide.org/basic-syntax/).
@@ -53,6 +44,7 @@ You can include text, `code`, and output as usual. Remember to take full advanta
 load(file="gg_filtered.Rdata")
 load(file="gg_filtered_sentiments.Rdata")
 load(file="gg_filtered_pos_neg.Rdata")
+load(file="pos_neg_val_sentiment.Rdata")
 #Euphoria
 load(file = "euph_words.Rdata")
 #South Park
@@ -64,67 +56,53 @@ load(file="sp_characters.Rdata")
 ```
 
 
+##Summaries of Each Show
+
+###Gilmore Girls
+Gilmore girls is a ____
+
+###Euphoria
+Euphoria is a ____
+
+###South Park
+South Park is a ____
 
 
-## Gilmore Girls
+## Most Common Words
+
+### Gilmore Girls
 
 ```{r}
-#| label: EXAMPLE OF MOST COMMON WORDS IN GILMORE GIRLS
+#| label: Gilmore Girls Most Common Words Visualization - Shani
 #| fig.align: left
 #| out.width: 100%
 
-gg_filtered |>
+#Customizing color palette
+nb.cols <- 20
+mycolors <- colorRampPalette(brewer.pal(8, "Pastel1"))(nb.cols)
+
+#plotting with palette for top 20 words by count 
+#excluding stop words and keeping words without the positivity ranking
+gg_filtered|>
   count(word, sort = TRUE) |>
-  slice(1:30) |>
-  # fct_reorder is used to re-order the axis (displaying the word) 
-  # by values of n (the number of times that word was used)
+  slice(1:20) |>
+  #fct_reorder to descending order it
   ggplot(aes(x = fct_reorder(word, n), 
              y = n, 
-             color = word, 
-             fill = word)) +
+             fill = as.factor(n))) +
   geom_col() +
   # Rotate graph
   coord_flip() +
-  guides(color = "none", 
-         fill = "none") +
-  labs(
-    # Remove x variable label; notice that although coordinates are flipped, 
-    # the labels correspond to which variables were specified 
-    # as `x` and `y` in `aes()`
-    x = NULL,
-    y = "Number of instances",
-    title = "Most Common Words for Gilmore Girls (Excl. Stop Words)") 
- # scale_color_brewer("Diamond\nclarity")
-```
-
-### Sentiment in Gilmore Girls
-
-```{r}
-#| label: EXAMPLE OF SENTIMENT ANALYSIS IN GILMORE GIRLS
-#| fig.align: left
-#| out.width: 100%
-
-gg_filtered_sentiments|>
-  count(sentiment, sort = TRUE) |>
-  slice(1:10) |> #NA for 1, annoying
-  ggplot(aes(x = fct_reorder(sentiment, n), 
-             y = n, 
-             color = sentiment, #maybe important... bad words red, good words green?
-             fill = sentiment)) +
-  geom_col() +
-  coord_flip() +
-  guides(color = "none", 
-         fill = "none") +
+  guides(fill = "none") +
   labs(
     x = NULL,
     y = "Number of instances",
-    title = "Most Common Sentiments in Gilmore Girls")
-
-mean(gg_filtered_pos_neg$value)
+    title = "Most Common Words for Gilmore Girls (Excl. Stop Words)") +
+  scale_fill_manual(values = mycolors) +
+  theme_light()
 ```
 
-## Euphoria
-
+### Euphoria
 ```{r}
 #| label: Most Common Words in Euphoria Overall
 #| fig.align: left
@@ -149,8 +127,88 @@ euph_words |>
     title = "The most common words said in Euphoria")
 ```
 
-### Euphoria by Character
+### South Park
+```{r}
+#| label: Most Common Words and 3grams in South Park
+#| fig.align: left
+#| out.width: 100%
 
+sp_lines_filtered |>
+  count(word, sort = TRUE) |>
+  slice(1:35) |>
+  ggplot(aes(x = fct_reorder(word, n), 
+             y = n, 
+             color = word, 
+             fill = word)) +
+  geom_col() +
+  coord_flip() +
+  guides(color = "none", 
+         fill = "none") +
+  labs(
+    x = NULL,
+    y = "Number of instances",
+    title = "Most Common Words for South Park (Excl. Stop Words)")
+
+
+sp_lines_full_ngram |>
+  count(threegram, sort = TRUE) |>
+  slice(2:36) |> #NA for 1, annoying
+  ggplot(aes(x = fct_reorder(threegram, n), 
+             y = n, 
+             color = threegram, 
+             fill = threegram)) +
+  geom_col() +
+  coord_flip() +
+  guides(color = "none", 
+         fill = "none") +
+  labs(
+    x = NULL,
+    y = "Number of instances",
+    title = "Most Common ThreeGrams for South Park")
+```
+
+## By Top 5 Characters
+
+### Gilmore Girls
+```{r}
+#Gilmore Girls Most Common Words by Character Visualization - Shani
+
+#finding top 5 characters
+top_5_chars <- gg_filtered |>
+  count(character, sort = TRUE)|>
+  slice(1:5) |>
+  select(character)
+
+#making into vector
+char_names <- str_to_title(top_5_chars[["character"]])
+
+#color palette
+nb.cols <- 65
+mycolors <- colorRampPalette(brewer.pal(8, "Pastel1"))(nb.cols)
+
+#plotting by character with color palette
+gg_filtered|>
+  filter(str_to_title(character) %in% char_names)|>
+  group_by(character)|>
+  count(word, sort = TRUE) |>
+  slice(1:15) |>
+  ggplot(aes(x = fct_reorder(word, n), 
+             y = n, 
+             fill = as.factor(n))) +
+  geom_col() +
+  # Rotate graph
+  coord_flip() +
+  guides(fill = "none") +
+  labs(
+    x = NULL,
+    y = "Number of instances",
+    title = paste("Most Common Words said by the Top 5 Characters for Gilmore Girls (Excl. Stop Words)")) +
+    facet_wrap(facets = ~reorder(str_to_title(character), -n), scales = "free_y") +
+  scale_fill_manual(values = mycolors) +
+  theme_light()
+```
+
+### Euphoria
 ```{r}
 #| label: Most Common Words by the Top 5 Characters in Euphoria
 #| fig.align: left
@@ -247,55 +305,83 @@ euph_words |>
     title = "The most common words said by Kat in Euphoria")
 ```
 
-## South Park
+### South Park
+Insert 
 
-South park is a 
+## Most Common Words by Sentiment 
 
+###Gilmore Girls
 ```{r}
-#| label: Most Common Words and 3grams in South Park
+#| label: EXAMPLE OF SENTIMENT ANALYSIS IN GILMORE GIRLS
 #| fig.align: left
 #| out.width: 100%
+#Gilmore Girls Filtered Most Common Words with Sentiment Visualization - Shani
 
-sp_lines_filtered |>
+#Most common words with sentiment (not NA in the dplyr package)
+gg_filtered|>
   count(word, sort = TRUE) |>
-  slice(1:35) |>
+  inner_join(pos_neg_val_sentiment, by = "word")|>
+  slice(1:20) |>
   ggplot(aes(x = fct_reorder(word, n), 
              y = n, 
-             color = word, 
-             fill = word)) +
+             fill = as.factor(value))) +
   geom_col() +
+  # Rotate graph
   coord_flip() +
-  guides(color = "none", 
-         fill = "none") +
+  #showing the legend with positive values at the top
+  guides(fill = guide_legend(reverse = TRUE)) +
   labs(
     x = NULL,
     y = "Number of instances",
-    title = "Most Common Words for South Park (Excl. Stop Words)")
-
-
-sp_lines_full_ngram |>
-  count(threegram, sort = TRUE) |>
-  slice(2:36) |> #NA for 1, annoying
-  ggplot(aes(x = fct_reorder(threegram, n), 
-             y = n, 
-             color = threegram, 
-             fill = threegram)) +
-  geom_col() +
-  coord_flip() +
-  guides(color = "none", 
-         fill = "none") +
-  labs(
-    x = NULL,
-    y = "Number of instances",
-    title = "Most Common ThreeGrams for South Park")
-
-
+    fill = "Positivity rating",
+    title = "Most Common Words with Sentiment for Gilmore Girls (Excl. Stop Words)") +
+  scale_fill_brewer(palette = "RdYlGn") +
+  theme_light()
 ```
 
-### Sentiment Analysis of South Park
+### Euphoria
+Insert
 
-We analyzed
+### South Park
+Insert 
 
+## Sentiment Analysis
+
+###Gilmore Girls
+```{r}
+#Gilmore Girls Sentiment Analysis Visualization and Value - Shani
+
+#Customizing color palette
+nb.cols <- 8
+mycolors <- colorRampPalette(brewer.pal(8, "Pastel1"))(nb.cols)
+
+#and how common the 8 different categorical sentiments are (visualization)
+#one word can have more than one sentiment in the dplyr dataset
+gg_filtered_sentiments|>
+  filter(sentiment != "positive" & sentiment != "negative")|>
+  count(sentiment, sort = TRUE) |>
+  slice(1:12) |> 
+  ggplot(aes(x = fct_reorder(sentiment, n), 
+             y = n, 
+             fill = sentiment)) +
+  geom_col() +
+  coord_flip() +
+  guides(fill = "none") +
+  labs(
+    x = NULL,
+    y = "Number of instances",
+    title = "Most Common Sentiments in Gilmore Girls") +
+  scale_fill_manual(values = mycolors) +
+  theme_light()
+
+#finding the overall sentiment of the show (score) 
+cat("The mean positivity value of Gilmore Girls is", mean(gg_filtered_pos_neg$value))
+```
+
+### Euphoria
+Insert
+
+### South Park
 ```{r}
 #| label: Sentiment Analysis for South Park
 #| fig.align: left
@@ -330,6 +416,8 @@ sp_characters %>%
   kable_styling()
 
 ```
+
+
 
 ### South Park by Character
 
@@ -675,7 +763,33 @@ You can make a numbered list like this
 ::: {}
 ### Content Column 1
 
-PUT PLOT 1
+```{r}
+#Gilmore Girls Most Common Words Visualization - Shani
+
+#Customizing color palette
+nb.cols <- 20
+mycolors <- colorRampPalette(brewer.pal(8, "Pastel1"))(nb.cols)
+
+#plotting with palette for top 20 words by count 
+#excluding stop words and keeping words without the positivity ranking
+gg_filtered|>
+  count(word, sort = TRUE) |>
+  slice(1:20) |>
+  #fct_reorder to descending order it
+  ggplot(aes(x = fct_reorder(word, n), 
+             y = n, 
+             fill = as.factor(n))) +
+  geom_col() +
+  # Rotate graph
+  coord_flip() +
+  guides(fill = "none") +
+  labs(
+    x = NULL,
+    y = "Number of instances",
+    title = "Most Common Words for Gilmore Girls (Excl. Stop Words)") +
+  scale_fill_manual(values = mycolors) +
+  theme_light()
+```
 :::
 
 <!-- Create another column (this one is just adding horizontal space to separate content) -->
@@ -685,10 +799,44 @@ PUT PLOT 1
 
 <!-- Create another column -->
 ::: {}
-PUT PLOT 2
+
 ### Content Column 2
 
-What makes a TV show popular? While that is a multifaceted question with no straightforward answer, we wanted to find similarities and differences between three vastly different successful TV shows (Gilmore Girls, Euphoria, South Park) to see what makes them so popular. We will be doing text and sentiment analysis, while also giving our own interpretations (as we have seen these shows) as to why these words / sentiments might resonate with viewers
+```{r}
+euph_words |>
+  #filter(char == "KAT") |> # to display a specific character's vocabulary
+  count(word, sort = TRUE) |>
+  slice(1:20) |>
+  ggplot(aes(x = fct_reorder(word, n), y = n, color = word, fill = word)) +
+  geom_col() +
+  # Rotate graph
+  coord_flip() +
+  guides(color = "none", 
+         fill = "none") +
+  labs(
+    # Remove x variable label; notice that although coordinates are flipped, 
+    # the labels correspond to which variables were specified 
+    # as `x` and `y` in `aes()`
+    x = NULL,
+    y = "Number of instances",
+    title = "The most common words said in Euphoria")
+
+sp_lines_filtered |>
+  count(word, sort = TRUE) |>
+  slice(1:20) |>
+  ggplot(aes(x = fct_reorder(word, n), 
+             y = n, 
+             color = word, 
+             fill = word)) +
+  geom_col() +
+  coord_flip() +
+  guides(color = "none", 
+         fill = "none") +
+  labs(
+    x = NULL,
+    y = "Number of instances",
+    title = "Most Common Words for South Park (Excl. Stop Words)")
+```
 
 ```{r}
 #| out.width: 80%
