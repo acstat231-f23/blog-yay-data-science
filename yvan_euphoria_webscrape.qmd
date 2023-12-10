@@ -116,11 +116,13 @@ custom_stop_words <- data.frame(
   word = c("v.o", "text", "yeah", "gonna",
            "wanna", "hey", "uh", "um",
            "rue", "jules", "nate", "maddy",
-           "fez", "gia", "tyler"), 
+           "fez", "gia", "tyler", "ethan",
+           "mm"), 
   lexicon = c("custom", "custom", "custom", "custom", 
               "custom", "custom", "custom", "custom",
               "custom", "custom", "custom", "custom",
-              "custom", "custom", "custom")
+              "custom", "custom", "custom", "custom",
+              "custom")
 )
 
 stop_words_full <- bind_rows(stop_words, custom_stop_words)
@@ -133,7 +135,6 @@ save(euph_words, file = "euph_words.Rdata")
 
 ```{r}
 euph_words |>
-  #filter(char == "KAT") |> # to display a specific character's vocabulary
   count(word, sort = TRUE) |>
   slice(1:20) |>
   ggplot(aes(x = fct_reorder(word, n), y = n, color = word, fill = word)) +
@@ -150,102 +151,12 @@ euph_words |>
     y = "Number of instances",
     title = "The most common words said in Euphoria")
 ```
-```{r}
 
+```{r}
 top_chars <- euph_words |>
   count(char, sort = TRUE) |>
   slice(1:5)
 top_chars
-
-euph_words |>
-  filter(char == "RUE") |> # to display a specific character's vocabulary
-  count(word, sort = TRUE) |>
-  slice(1:20) |>
-  ggplot(aes(x = fct_reorder(word, n), y = n, color = word, fill = word)) +
-  geom_col() +
-  # Rotate graph
-  coord_flip() +
-  guides(color = "none", 
-         fill = "none") +
-  labs(
-    # Remove x variable label; notice that although coordinates are flipped, 
-    # the labels correspond to which variables were specified 
-    # as `x` and `y` in `aes()`
-    x = NULL,
-    y = "Number of instances",
-    title = "The most common words said by Rue in Euphoria")
-
-euph_words |>
-  filter(char == "NATE") |> # to display a specific character's vocabulary
-  count(word, sort = TRUE) |>
-  slice(1:20) |>
-  ggplot(aes(x = fct_reorder(word, n), y = n, color = word, fill = word)) +
-  geom_col() +
-  # Rotate graph
-  coord_flip() +
-  guides(color = "none", 
-         fill = "none") +
-  labs(
-    # Remove x variable label; notice that although coordinates are flipped, 
-    # the labels correspond to which variables were specified 
-    # as `x` and `y` in `aes()`
-    x = NULL,
-    y = "Number of instances",
-    title = "The most common words said by Nate in Euphoria")
-
-euph_words |>
-  filter(char == "JULES") |> # to display a specific character's vocabulary
-  count(word, sort = TRUE) |>
-  slice(1:20) |>
-  ggplot(aes(x = fct_reorder(word, n), y = n, color = word, fill = word)) +
-  geom_col() +
-  # Rotate graph
-  coord_flip() +
-  guides(color = "none", 
-         fill = "none") +
-  labs(
-    # Remove x variable label; notice that although coordinates are flipped, 
-    # the labels correspond to which variables were specified 
-    # as `x` and `y` in `aes()`
-    x = NULL,
-    y = "Number of instances",
-    title = "The most common words said by Jules in Euphoria")
-
-euph_words |>
-  filter(char == "MADDY") |> # to display a specific character's vocabulary
-  count(word, sort = TRUE) |>
-  slice(1:20) |>
-  ggplot(aes(x = fct_reorder(word, n), y = n, color = word, fill = word)) +
-  geom_col() +
-  # Rotate graph
-  coord_flip() +
-  guides(color = "none", 
-         fill = "none") +
-  labs(
-    # Remove x variable label; notice that although coordinates are flipped, 
-    # the labels correspond to which variables were specified 
-    # as `x` and `y` in `aes()`
-    x = NULL,
-    y = "Number of instances",
-    title = "The most common words said by Maddy in Euphoria")
-
-euph_words |>
-  filter(char == "KAT") |> # to display a specific character's vocabulary
-  count(word, sort = TRUE) |>
-  slice(1:20) |>
-  ggplot(aes(x = fct_reorder(word, n), y = n, color = word, fill = word)) +
-  geom_col() +
-  # Rotate graph
-  coord_flip() +
-  guides(color = "none", 
-         fill = "none") +
-  labs(
-    # Remove x variable label; notice that although coordinates are flipped, 
-    # the labels correspond to which variables were specified 
-    # as `x` and `y` in `aes()`
-    x = NULL,
-    y = "Number of instances",
-    title = "The most common words said by Kat in Euphoria")
 ```
 
 ```{r}
@@ -256,9 +167,8 @@ euph_words |>
   slice(1:10) |>
   ggplot(aes(x = fct_reorder(word, n), y = n, color = word, fill = word)) +
     geom_col() +
-    facet_wrap(~char) +
-    # Rotate graph
     coord_flip() +
+    # Rotate graph
     guides(color = "none", 
            fill = "none") +
     labs(
@@ -268,7 +178,64 @@ euph_words |>
       x = NULL,
       y = "Number of instances",
       title = "The most common words said by top 5 characters in Euphoria"
-    )
+    ) +
+    facet_wrap(~char, scales = "free_y")
+```
 
+```{r}
+pos_neg_val_sentiment <- get_sentiments("afinn") #from tidyverse
+
+#then mutate filtered words with the pos/neg sentiments associated with the words
+euph_pos_neg <- inner_join(euph_words, pos_neg_val_sentiment, by = "word")
+
+#now we can do something similar with descriptive sentiments (eg. hell feels angry)
+word_sentiment <- get_sentiments("nrc") 
+euph_sentiments <- inner_join(euph_words, word_sentiment, by="word")
+```
+
+```{r}
+euph_sentiments |>
+  filter(sentiment != "positive" & sentiment != "negative") |>
+  count(sentiment, sort = TRUE) |>
+  slice(1:10) |>
+  ggplot(aes(x = fct_reorder(sentiment, n), 
+             y = n, 
+             color = sentiment, #maybe important... bad words red, good words green?
+             fill = sentiment)) +
+  geom_col() +
+  coord_flip() +
+  guides(color = "none", 
+         fill = "none") +
+  labs(
+    x = NULL,
+    y = "Number of instances",
+    title = "Most Common Sentiments in Euphoria")
+
+mean(euph_pos_neg$value)
+```
+
+```{r}
+euph_words |>
+  count(word, sort = TRUE) |>
+  inner_join(pos_neg_val_sentiment, by = "word") |>
+  slice(1:20) |>
+  ggplot(aes(x = fct_reorder(word, n), y = n, color = as.factor(value), fill = as.factor(value))) +
+  geom_col() +
+  # Rotate graph
+  coord_flip() +
+  scale_color_brewer(palette = "RdYlGn") +
+  scale_fill_brewer(palette = "RdYlGn") +
+  guides(
+    color = guide_legend(reverse = TRUE), 
+    fill = guide_legend(reverse = TRUE)) +
+  labs(
+    # Remove x variable label; notice that although coordinates are flipped, 
+    # the labels correspond to which variables were specified 
+    # as `x` and `y` in `aes()`
+    x = NULL,
+    y = "Number of instances",
+    color = "Positivity rating",
+    fill = "Positivity rating",
+    title = "The most common positivity-rated words said in Euphoria")
 ```
 
