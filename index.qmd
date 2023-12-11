@@ -35,7 +35,7 @@ library(kableExtra)
 
 What makes a TV show popular? While that is a multifaceted question with no straightforward answer, we want to find similarities and differences between three vastly different and very successful TV shows (Gilmore Girls, Euphoria, South Park) to see what makes them so popular. To look into the "why," we have done text and sentiment analysis of the scripts of these shows and contextualized these analyses with our own interpretations as to why these words and general sentiments might resonate with viewers. Having seen these shows, we are able to confirm whether the analyses accurately depict the essence and topics of the series. First, we had to webscrape these scripts and then we cleaned up the scripts and removed the stop words. We then performed the analyses to reach a conclusion about how and why such disparate TV shows are so appealing to the general public.
 
-# Content
+# Text Analysis
 
 You can include text, `code`, and output as usual. Remember to take full advantage of Markdown and its [syntax shortcuts](https://www.markdownguide.org/basic-syntax/).
 
@@ -486,13 +486,16 @@ sp_lines_filtered_pos_neg %>%
 
 ```
 
+# Sentiment Analysis
+To implement the sentiment analysis, we used tidy text databases called AFINN and nrc that describe how postive/negative a word is with a score from -5 to 5 and associate a number of categorical sentiments like fear, trust, joy, anticipation, and anger with the same words, respectively. There are only 2,477 words that exist in this database and it cannot take into account context and tone, revealing this analysis's limits.
 
 ## Most Common Words by Sentiment 
-Instead of looking just at the most common words, we wanted to filter even more by dplyr's  sentiment package 
+Instead of looking just at the most common words, we wanted to filter even more by dplyr's  sentiment package and look at the most common words that have an associated positivity value from the AFINN database. Using a color scale where green is postiive and red is negative, we can reevaluate the recurring themes and topics in the shows.
+
 ###Gilmore Girls
 
 ```{r}
-#| label: EXAMPLE OF SENTIMENT ANALYSIS IN GILMORE GIRLS
+#| label: Most common words sentiment analysis in Gilmore girls
 #| fig.align: left
 #| out.width: 100%
 #Gilmore Girls Filtered Most Common Words with Sentiment Visualization - Shani
@@ -521,6 +524,9 @@ gg_filtered|>
 
 ### Euphoria
 ```{r}
+#| label: Most common words sentiment analysis in Euphoria
+#| fig.align: left
+#| out.width: 100%
 euph_words |>
   count(word, sort = TRUE) |>
   inner_join(pos_neg_val_sentiment, by = "word") |>
@@ -544,12 +550,27 @@ euph_words |>
 ```
 
 ### South Park
-Insert 
+Insert !!!!!!!
 
-## Sentiment Analysis
-EXPLAIN OUR SENTIMENT ANALYSIS
+## Positivity Scores
+
+```{r}
+#| label: Positivity Score table in all the shows
+#| fig.align: left
+#| out.width: 100%
+
+#finding the overall sentiment of the show (score) 
+cat("The mean positivity value of Gilmore Girls is", mean(gg_filtered_pos_neg$value))
+cat("The mean positivity value of Euphoria is", mean(euph_pos_neg$value))
+cat("The mean positivity value of South Park is", mean(sp_lines_filtered_pos_neg$value, na.rm = TRUE))
+
+```
+
+## Categorical Sentiment Analysis
+EXPLAIN OUR categorical SENTIMENT ANALYSIS
 
 ###Gilmore Girls
+
 ```{r}
 #Gilmore Girls Sentiment Analysis Visualization and Value - Shani
 
@@ -576,8 +597,6 @@ gg_filtered_sentiments|>
   scale_fill_manual(values = mycolors) +
   theme_light()
 
-#finding the overall sentiment of the show (score) 
-cat("The mean positivity value of Gilmore Girls is", mean(gg_filtered_pos_neg$value))
 ```
 
 ### Euphoria
@@ -599,7 +618,6 @@ euph_sentiments |>
     y = "Number of instances",
     title = "Most Common Sentiments in Euphoria")
 
-cat("The mean positivity value of Euphoria is", mean(euph_pos_neg$value))
 ```
 
 ### South Park
@@ -626,7 +644,6 @@ sp_lines_filtered_sentiments|>
   scale_fill_manual(values = mycolors) +
   theme_light()
 
-cat("The mean positivity value of South Park is", mean(sp_lines_filtered_pos_neg$value, na.rm = TRUE))
 
 sp_characters %>%
   kable(booktabs = TRUE, digits = 2, col.names = c(
