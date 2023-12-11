@@ -240,3 +240,27 @@ euph_words |>
     title = "The most common positivity-rated words said in Euphoria")
 ```
 
+```{r}
+filtered <- c(sum(euph_words$char == "RUE"),
+              sum(euph_words$char == "NATE"),
+              sum(euph_words$char == "JULES"),
+              sum(euph_words$char == "MADDY"),
+              sum(euph_words$char == "KAT"))
+
+unfiltered <- c(sum(euph_words_full$char == "RUE"),
+              sum(euph_words_full$char == "NATE"),
+              sum(euph_words_full$char == "JULES"),
+              sum(euph_words_full$char == "MADDY"),
+              sum(euph_words_full$char == "KAT"))
+
+euph_char_data <- data.frame(top_chars, filtered, unfiltered)
+  
+euph_char_data <- euph_char_data |>
+  mutate(filtered_percent = 100*(filtered / as.integer(count(euph_words)))) |>
+  mutate(unfiltered_percent = 100*(unfiltered / as.integer(count(euph_words_full)))) |>
+  select(-n)
+
+
+save(euph_char_data, file="euph_char_data.Rdata")
+```
+

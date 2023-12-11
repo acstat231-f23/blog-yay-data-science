@@ -47,6 +47,7 @@ load(file="gg_character_data.Rdata")
 load(file = "euph_words.Rdata")
 load(file = "euph_sentiments.Rdata")
 load(file = "euph_pos_neg.Rdata")
+load(file = "euph_char_data.Rdata")
 #South Park
 load(file="sp_lines_filtered.Rdata")
 load(file="sp_lines_full_ngram.Rdata")
@@ -295,6 +296,29 @@ euph_words |>
   facet_wrap(facets = ~reorder(str_to_title(char), -n), scales = "free_y") +
   scale_fill_manual(values = mycolors) +
   theme_light()
+
+#Character filtered vs unfiltered words data table
+euph_char_data |>
+  mutate(char = str_to_title(char)) |>
+  kable(booktabs = TRUE, digits = 2, col.names = c(
+    "Character",
+    "Filtered Words",
+    "Unfiltered Words",
+    "% of all Filtered words",
+    "% of all Unfiltered words"
+  )) |>
+  kable_styling()
+
+#by top 5 Characters sentiments
+euph_pos_neg |>
+  filter(char %in% top_chars$char) |>
+  group_by(str_to_title(char)) |>
+  summarize(mean = mean(value, na.rm = TRUE)) |>
+  kable(booktabs = TRUE, digits = 3, col.names = c(
+    "Character",
+    "Overall Mean of Sentiment Throughout the show"
+  )) |>
+  kable_styling()
 ```
 
 ### South Park
