@@ -36,6 +36,9 @@ library(kableExtra)
 What makes a TV show popular? While that is a multifaceted question with no straightforward answer, we want to find similarities and differences between three vastly different and very successful TV shows (Gilmore Girls, Euphoria, South Park) to see what makes them so popular. To look into the "why," we have done text and sentiment analysis of the scripts of these shows and contextualized these analyses with our own interpretations as to why these words and general sentiments might resonate with viewers. Having seen these shows, we are able to confirm whether the analyses accurately depict the essence and topics of the series. First, we had to webscrape these scripts and then we cleaned up the scripts and removed the stop words. We then performed the analyses to reach a conclusion about how and why such disparate TV shows are so appealing to the general public.
 
 ```{r}
+#| label: Load in RData files
+#| include: false
+
 #For everyone
 load(file="pos_neg_val_sentiment.Rdata")
 #Gilmore Girls
@@ -160,7 +163,7 @@ euph_words |>
     # as `x` and `y` in `aes()`
     x = NULL,
     y = "Number of instances",
-    title = "The most common words said in Euphoria (Excl. Stop Words)") +
+    title = "Most Common Words for Euphoria (Excl. Stop Words)") +
   scale_fill_manual(values = mycolors) +
   theme_light()
 ```
@@ -243,8 +246,8 @@ gg_filtered|>
     x = NULL,
     y = "Number of instances",
     fill = "Positivity rating",
-    title = "Most Common Words with Sentiment for Gilmore Girls") +
-  scale_fill_brewer(palette = "RdYlGn") +
+    title = "Most Common Positivity-rated Words in Gilmore Girls") +
+  scale_fill_brewer(palette = "RdYlGn", limit = factor(-5:5)) +
   theme_light()
 ```
 :::
@@ -271,7 +274,7 @@ euph_words |>
   geom_col() +
   # Rotate graph
   coord_flip() +
-  scale_fill_brewer(palette = "RdYlGn") +
+  scale_fill_brewer(palette = "RdYlGn", limit = factor(-5:5)) +
   guides(
     color = guide_legend(reverse = TRUE), 
     fill = guide_legend(reverse = TRUE)) +
@@ -282,7 +285,7 @@ euph_words |>
     x = NULL,
     y = "Number of instances",
     fill = "Positivity rating",
-    title = "The most common positivity-rated words said in Euphoria") +
+    title = "Most Common Positivity-rated Words in Euphoria") +
   theme_light()
 ```
 
@@ -311,7 +314,7 @@ sp_lines_filtered |>
   geom_col() +
   # Rotate graph
   coord_flip() +
-  scale_fill_brewer(palette = "RdYlGn") +
+  scale_fill_brewer(palette = "RdYlGn", limit = factor(-5:5)) +
   guides(
     color = guide_legend(reverse = TRUE), 
     fill = guide_legend(reverse = TRUE)) +
@@ -319,7 +322,7 @@ sp_lines_filtered |>
     x = NULL,
     y = "Number of instances",
     fill = "Positivity rating",
-    title = "The most common positivity-rated words said in South Park") +
+    title = "Most Common Positivity-rated Words in South Park") +
   theme_light()
 
 ```
@@ -413,6 +416,8 @@ euph_sentiments |>
 #| label: South Park categorical Sentiment Analysis Visualization
 #| fig.align: left
 #| out.width: 100%
+nb.cols <- 8
+mycolors <- colorRampPalette(brewer.pal(6, "Set1"))(nb.cols)
 
 sp_lines_filtered_sentiments|>
   count(sentiment, sort = TRUE) |>
@@ -428,7 +433,8 @@ sp_lines_filtered_sentiments|>
     x = NULL,
     y = "Number of instances",
     title = "Most Common Sentiments in South Park") +
-  scale_fill_manual(values = mycolors)
+  scale_fill_manual(values = mycolors) + 
+  theme_light()
 
 ```
 
