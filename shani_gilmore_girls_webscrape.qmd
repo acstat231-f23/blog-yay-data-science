@@ -18,6 +18,7 @@ library(stringr)
 library(dplyr)
 library(tidytext)
 library(RColorBrewer)
+library(kableExtra)
 ```
 
 #Loading in the episode links, titles, season into a dataframe called gg_eps
@@ -203,7 +204,7 @@ save(gg_filtered, file="gg_filtered.Rdata")
 
 #Customizing color palette
 nb.cols <- 20
-mycolors <- colorRampPalette(brewer.pal(8, "Pastel1"))(nb.cols)
+mycolors <- colorRampPalette(brewer.pal(8, "Set2"))(nb.cols)
 
 #plotting with palette for top 20 words by count 
 #excluding stop words and keeping words without the positivity ranking
@@ -262,6 +263,54 @@ gg_filtered|>
   scale_fill_manual(values = mycolors) +
   theme_light()
 ```
+```{r}
+#Table on top 5 characters, code from daniel
+
+filtered <- c(sum(gg_filtered$character == "lorelai"),
+              sum(gg_filtered$character == "rory"),
+              sum(gg_filtered$character == "luke"),
+              sum(gg_filtered$character == "emily"),
+              sum(gg_filtered$character == "sookie"))
+
+unfiltered <- c(sum(gg_by_word$character == "lorelai"),
+              sum(gg_by_word$character == "rory"),
+              sum(gg_by_word$character == "luke"),
+              sum(gg_by_word$character == "emily"),
+              sum(gg_by_word$character == "sookie"))
+
+gg_character_data <- data.frame(char_names, filtered, unfiltered)
+  
+gg_character_data <- gg_character_data |>
+  mutate(filtered_percent = 100*(filtered / as.integer(count(gg_filtered)))) |>
+  mutate(unfiltered_percent = 100*(unfiltered / as.integer(count(gg_by_word))))
+
+
+save(gg_character_data, file="gg_character_data.Rdata")
+load(file="gg_character_data.Rdata")
+
+
+gg_character_data |>
+  kable(booktabs = TRUE, digits = 2, col.names = c(
+    "Character",
+    "Filtered Words",
+    "Unfiltered Words",
+    "% of all Filtered words",
+    "% of all Unfiltered words"
+  )) |>
+  kable_styling()
+```
+```{r}
+gg_filtered_pos_neg |>
+  filter(str_to_title(character) %in% char_names) |>
+  group_by(str_to_title(character)) |>
+  summarize(mean = mean(value, na.rm = TRUE)) |>
+  kable(booktabs = TRUE, digits = 3, col.names = c(
+    "Character",
+    "Overall Mean of Sentiment Throughout the show"
+  )) |>
+  kable_styling()
+```
+
 
 ```{r}
 #Gilmore Girls Most Common Threegrams Visualization - Shani
@@ -289,6 +338,7 @@ gg_threegrams |>
 
 #sentiments (positive and negative)
 pos_neg_val_sentiment <- get_sentiments("afinn") #from tidyverse
+save(pos_neg_val_sentiment, file="pos_neg_val_sentiment.Rdata")
 
 #then mutate filtered words with the pos/neg values associated with the words
 gg_filtered_pos_neg <- inner_join(gg_filtered, 
@@ -361,6 +411,17 @@ gg_filtered_sentiments|>
 cat("The mean positivity value of Gilmore Girls is", mean(gg_filtered_pos_neg$value))
 ```
 
+```{r}
+#stacked bar plot for the different sentiments
+p <- ggplot(df, aes(x = dose, y = len))+
+  geom_col(aes(fill = supp), width = 0.7)
+p
+il <- ggplot(p11, aes(x = question, y = q.int.local))+
+  geom_col(aes(fill = knowledge), width = 0.7)+ 
+  coord_flip()+
+  scale_fill_manual(values = c("#CA463F", "#E2CA58", "#B0D094", "#67BBD2", "#3C518F"))+
+  geom_text(aes(label = q.int.local),color="white",size=2,position=position_dodge(width=0.9), hjust=-0.2)
+```
 
 
 
