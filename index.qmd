@@ -338,7 +338,7 @@ gg_filtered|>
   scale_fill_manual(values = mycolors) +
   theme_light()
 
-#Character data table
+#Character filtered vs unfiltered words data table
 gg_character_data |>
   kable(booktabs = TRUE, digits = 2, col.names = c(
     "Character",
@@ -346,6 +346,17 @@ gg_character_data |>
     "Unfiltered Words",
     "% of all Filtered words",
     "% of all Unfiltered words"
+  )) |>
+  kable_styling()
+
+#by top 5 Characters sentiments SHOULD GO LATER W THE SENTIMENTS? - maybe consider moving whole chunk of by character as a final thing, so first text analysis then sentiment analysis then by character analysis?
+gg_filtered_pos_neg |>
+  filter(str_to_title(character) %in% char_names) |>
+  group_by(str_to_title(character)) |>
+  summarize(mean = mean(value, na.rm = TRUE)) |>
+  kable(booktabs = TRUE, digits = 3, col.names = c(
+    "Character",
+    "Overall Mean of Sentiment Throughout the show"
   )) |>
   kable_styling()
 ```
