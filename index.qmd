@@ -62,7 +62,7 @@ load(file="sp_characters.Rdata")
 Gilmore Girls is a feel-good drama comedy series focused on the relationship between a young single mother and her teenage daughter and their lives in a small New England town in the late 90s/early 2000s. With quirky characters in this town and complex relationships with parents and extended family, Gilmore Girls follows this unique mother-daughter duo through academic, professional, romantic, and existential ups and downs. This show has a very characteristic tone, with a lot of pop culture references and speedy, witty banter in the dialogue. The sense of community, ambition, independence, and love has left a lasting effect on millions of viewers.
 
 ###Euphoria
-Euphoria is a teen drama series known for its graphic depiction of mature topics, especially sexual abuse and drug use, as well as its focus on cinematography and scoring. It follows the lives of Rue and her high-school classmates as they navigate a variety of challenges from self-confidence and sexuality issues to addiction, grief, and abuse.The show's distinct visual style targets and portrays Gen Z in a way that has significantly influenced trends in fashion, makeup, and social media.
+Euphoria is a teen drama series known for its graphic depiction of mature topics, especially sexual abuse and drug use, as well as its focus on cinematography and scoring. It follows the lives of Rue and her high-school classmates as they navigate a variety of challenges from self-confidence and sexuality issues to addiction, grief, and abuse. The show's distinct visual style targets and portrays Gen Z in a way that has significantly influenced trends in fashion, makeup, and social media.
 
 ###South Park
 South Park is a sitcom infamous for its exploration on offensive and controversial topics in a satirical fashion. The show centers around four fourth-graders ((Eric) Cartman, Kyle, Stan, Kenny) and their adventures. (ADD REASON WHY IT'S POPULAR) 
@@ -142,7 +142,7 @@ euph_words |>
     # as `x` and `y` in `aes()`
     x = NULL,
     y = "Number of instances",
-    title = "The most common words said in Euphoria (Excl Stop Words)") +
+    title = "The most common words said in Euphoria (Excl. Stop Words)") +
   scale_fill_manual(values = mycolors) +
   theme_classic()
 ```
@@ -232,7 +232,6 @@ gg_filtered|>
 #| out.width: 100%
 
 euph_words |>
-  #filter(char == "KAT") |> # to display a specific character's vocabulary
   count(word, sort = TRUE) |>
   slice(1:20) |>
   ggplot(aes(x = fct_reorder(word, n), y = n, color = word, fill = word)) +
@@ -440,7 +439,7 @@ This is a bit different as in south park, we mainly revolve around these four ch
 
 #followed shani's code, except since kenny doesn't talk much (still main character), it's important to get him
 nb.cols <- 51 #R says it needs 51, so I edited it
-mycolors_sp <- colorRampPalette(brewer.pal(8, "Pastel1"))(nb.cols)
+mycolors_sp <- colorRampPalette(brewer.pal(8, "Set1"))(nb.cols)
 
 
 sp_main_characters <- data.frame(Character  = c("Cartman", "Kenny", "Stan", "Kyle"))
@@ -453,13 +452,11 @@ sp_lines_filtered |>
   slice(1:15) |>
   ggplot(aes(x = fct_reorder(word, n), 
              y = n, 
-             color = word, 
              fill = as.factor(n))) +
   geom_col() +
   # Rotate graph
   coord_flip() +
-  guides(color = "none", 
-         fill = "none") +
+  guides(fill = "none") +
   labs(
     x = NULL,
     y = "Number of instances",
