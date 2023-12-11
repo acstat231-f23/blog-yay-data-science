@@ -267,11 +267,15 @@ EXPLAIN THE CHARACTERS
 #| fig.align: left
 #| out.width: 100%
 
+top_chars <- euph_words |>
+  count(char, sort = TRUE) |>
+  slice(1:5)
+
 euph_words |>
   filter(char %in% top_chars$char) |>
   group_by(char) |>
   count(word, sort = TRUE) |>
-  slice(1:10) |>
+  slice(1:15) |>
   ggplot(aes(x = fct_reorder(word, n), y = n, color = word, fill = word)) +
     geom_col() +
     coord_flip() +
@@ -382,10 +386,6 @@ gg_filtered|>
 #| label: Most common words sentiment analysis in Euphoria
 #| fig.align: left
 #| out.width: 100%
-
-top_chars <- euph_words |>
-  count(char, sort = TRUE) |>
-  slice(1:5)
 
 euph_words |>
   count(word, sort = TRUE) |>
