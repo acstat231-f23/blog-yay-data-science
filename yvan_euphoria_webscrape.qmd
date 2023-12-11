@@ -190,6 +190,7 @@ euph_pos_neg <- inner_join(euph_words, pos_neg_val_sentiment, by = "word")
 word_sentiment <- get_sentiments("nrc") 
 euph_sentiments <- inner_join(euph_words, word_sentiment, by="word")
 
+save(euph_pos_neg, file = "euph_pos_neg.Rdata")
 save(euph_sentiments, file = "euph_sentiments.Rdata")
 ```
 
