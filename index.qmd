@@ -549,11 +549,17 @@ euph_words |>
     title = "The most common positivity-rated words said in Euphoria")
 ```
 
-### South Park
-Insert !!!!!!!
+### South Park 
+INSERTTTT
+```{r}
+#| label: Most common words sentiment analysis in South Park
+#| fig.align: left
+#| out.width: 100%
+
+```
 
 ## Positivity Scores
-
+EXPLAIN POSITIVITY SCORES
 ```{r}
 #| label: Positivity Score table in all the shows
 #| fig.align: left
