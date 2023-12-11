@@ -189,6 +189,8 @@ euph_pos_neg <- inner_join(euph_words, pos_neg_val_sentiment, by = "word")
 #now we can do something similar with descriptive sentiments (eg. hell feels angry)
 word_sentiment <- get_sentiments("nrc") 
 euph_sentiments <- inner_join(euph_words, word_sentiment, by="word")
+
+save(euph_sentiments, file = "euph_sentiments.Rdata")
 ```
 
 ```{r}
