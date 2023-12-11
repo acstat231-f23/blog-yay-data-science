@@ -63,7 +63,7 @@ IN EACH SECTION PUT 2-3 SENTENCES ABOUT EACH SHOW LIKE INFO ABOUT WHEN IT WAS MA
 Gilmore girls is a ____
 
 ###Euphoria
-Euphoria is a teen drama series known for its graphic depiction of mature topics, especially sexual abuse and drug use, as well as its focus on cinematography and scoring. It follows the lives of Rue and her high-school classmates as they navigate a variety of challenges from self-confidence and sexuality issues to addiction, grief, and abuse.The show's distinct visual style targets and portrays Gen Z in a way that has significantly influenced trends in fashion, makeup, and social media.
+Euphoria is a teen drama series known for its graphic depiction of mature topics, especially sexual abuse and drug use, as well as its focus on cinematography and scoring. It follows the lives of Rue and her high-school classmates as they navigate a variety of challenges from self-confidence and sexuality issues to addiction, grief, and abuse. The show's distinct visual style targets and portrays Gen Z in a way that has significantly influenced trends in fashion, makeup, and social media.
 
 ###South Park
 South Park is a sitcom infamous for its exploration on offensive and controversial topics in a satirical fashion. The show centers around four fourth-graders ((Eric) Cartman, Kyle, Stan, Kenny) and their adventures. (ADD REASON WHY IT'S POPULAR) 
@@ -143,7 +143,7 @@ euph_words |>
     # as `x` and `y` in `aes()`
     x = NULL,
     y = "Number of instances",
-    title = "The most common words said in Euphoria (Excl Stop Words)") +
+    title = "The most common words said in Euphoria (Excl. Stop Words)") +
   scale_fill_manual(values = mycolors) +
   theme_classic()
 ```
@@ -233,7 +233,6 @@ gg_filtered|>
 #| out.width: 100%
 
 euph_words |>
-  #filter(char == "KAT") |> # to display a specific character's vocabulary
   count(word, sort = TRUE) |>
   slice(1:20) |>
   ggplot(aes(x = fct_reorder(word, n), y = n, color = word, fill = word)) +
