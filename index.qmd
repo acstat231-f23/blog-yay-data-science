@@ -267,6 +267,9 @@ EXPLAIN THE CHARACTERS
 #| fig.align: left
 #| out.width: 100%
 
+nb.cols <- 46
+mycolors <- colorRampPalette(brewer.pal(9, "BuPu"))(nb.cols)
+
 top_chars <- euph_words |>
   count(char, sort = TRUE) |>
   slice(1:5)
@@ -276,12 +279,11 @@ euph_words |>
   group_by(char) |>
   count(word, sort = TRUE) |>
   slice(1:15) |>
-  ggplot(aes(x = fct_reorder(word, n), y = n, color = word, fill = word)) +
+  ggplot(aes(x = fct_reorder(word, n), y = n, fill = word)) +
     geom_col() +
     coord_flip() +
     # Rotate graph
-    guides(color = "none", 
-           fill = "none") +
+    guides(fill = "none") +
     labs(
       # Remove x variable label; notice that although coordinates are flipped, 
       # the labels correspond to which variables were specified 
@@ -290,7 +292,9 @@ euph_words |>
       y = "Number of instances",
       title = "The most common words said by top 5 characters in Euphoria"
     ) +
-    facet_wrap(~char, scales = "free_y")
+  facet_wrap(facets = ~reorder(str_to_title(char), -n), scales = "free_y") +
+  scale_fill_manual(values = mycolors) +
+  theme_light()
 ```
 
 ### South Park
@@ -383,7 +387,7 @@ gg_filtered|>
 
 ### Euphoria
 ```{r}
-#| label: Most common words sentiment analysis in Euphoria
+#| label: Most common words positivity rating in Euphoria
 #| fig.align: left
 #| out.width: 100%
 
@@ -498,22 +502,24 @@ gg_filtered_sentiments|>
 #| fig.align: left
 #| out.width: 100%
 
+nb.cols <- 8
+mycolors <- colorRampPalette(brewer.pal(9, "BuPu"))(nb.cols)
+
 euph_sentiments |>
   filter(sentiment != "positive" & sentiment != "negative") |>
   count(sentiment, sort = TRUE) |>
   slice(1:10) |>
   ggplot(aes(x = fct_reorder(sentiment, n), 
-             y = n, 
-             color = sentiment, #maybe important... bad words red, good words green?
+             y = n,
              fill = sentiment)) +
   geom_col() +
   coord_flip() +
-  guides(color = "none", 
-         fill = "none") +
+  guides(fill = "none") +
   labs(
     x = NULL,
     y = "Number of instances",
     title = "Most Common Sentiments in Euphoria") +
+  scale_fill_manual(values = mycolors) +
   theme_light()
 
 ```
