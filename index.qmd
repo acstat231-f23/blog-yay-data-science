@@ -57,10 +57,9 @@ load(file="sp_characters.Rdata")
 
 
 ##Summaries of Each Show
-IN EACH SECTION PUT 2-3 SENTENCES ABOUT EACH SHOW LIKE INFO ABOUT WHEN IT WAS MADE, SUMMARIES, HOW MANY SEASONS/EPISODES
 
 ###Gilmore Girls
-Gilmore girls is a ____
+Gilmore Girls is a feel-good drama comedy series focused on the relationship between a young single mother and her teenage daughter and their lives in a small New England town in the late 90s/early 2000s. With quirky characters in this town and complex relationships with parents and extended family, Gilmore Girls follows this unique mother-daughter duo through academic, professional, romantic, and existential ups and downs. This show has a very characteristic tone, with a lot of pop culture references and speedy, witty banter in the dialogue. The sense of community, ambition, independence, and love has left a lasting effect on millions of viewers.
 
 ###Euphoria
 Euphoria is a teen drama series known for its graphic depiction of mature topics, especially sexual abuse and drug use, as well as its focus on cinematography and scoring. It follows the lives of Rue and her high-school classmates as they navigate a variety of challenges from self-confidence and sexuality issues to addiction, grief, and abuse.The show's distinct visual style targets and portrays Gen Z in a way that has significantly influenced trends in fashion, makeup, and social media.
