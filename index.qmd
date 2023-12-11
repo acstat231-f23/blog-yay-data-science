@@ -75,6 +75,7 @@ South Park is a sitcom infamous for its exploration on offensive and controversi
 
 <!-- Create a column -->
 ::: {}
+
 ### Gilmore Girls
 
 ```{r}
