@@ -382,6 +382,11 @@ gg_filtered|>
 #| label: Most common words sentiment analysis in Euphoria
 #| fig.align: left
 #| out.width: 100%
+
+top_chars <- euph_words |>
+  count(char, sort = TRUE) |>
+  slice(1:5)
+
 euph_words |>
   count(word, sort = TRUE) |>
   inner_join(pos_neg_val_sentiment, by = "word") |>
