@@ -370,94 +370,25 @@ EXPLAIN THE CHARACTERS
 #| out.width: 100%
 
 euph_words |>
-  filter(char == "RUE") |> # to display a specific character's vocabulary
+  filter(char %in% top_chars$char) |>
+  group_by(char) |>
   count(word, sort = TRUE) |>
-  slice(1:20) |>
+  slice(1:10) |>
   ggplot(aes(x = fct_reorder(word, n), y = n, color = word, fill = word)) +
-  geom_col() +
-  # Rotate graph
-  coord_flip() +
-  guides(color = "none", 
-         fill = "none") +
-  labs(
-    # Remove x variable label; notice that although coordinates are flipped, 
-    # the labels correspond to which variables were specified 
-    # as `x` and `y` in `aes()`
-    x = NULL,
-    y = "Number of instances",
-    title = "The most common words said by Rue in Euphoria")
-
-euph_words |>
-  filter(char == "NATE") |> # to display a specific character's vocabulary
-  count(word, sort = TRUE) |>
-  slice(1:20) |>
-  ggplot(aes(x = fct_reorder(word, n), y = n, color = word, fill = word)) +
-  geom_col() +
-  # Rotate graph
-  coord_flip() +
-  guides(color = "none", 
-         fill = "none") +
-  labs(
-    # Remove x variable label; notice that although coordinates are flipped, 
-    # the labels correspond to which variables were specified 
-    # as `x` and `y` in `aes()`
-    x = NULL,
-    y = "Number of instances",
-    title = "The most common words said by Nate in Euphoria")
-
-euph_words |>
-  filter(char == "JULES") |> # to display a specific character's vocabulary
-  count(word, sort = TRUE) |>
-  slice(1:20) |>
-  ggplot(aes(x = fct_reorder(word, n), y = n, color = word, fill = word)) +
-  geom_col() +
-  # Rotate graph
-  coord_flip() +
-  guides(color = "none", 
-         fill = "none") +
-  labs(
-    # Remove x variable label; notice that although coordinates are flipped, 
-    # the labels correspond to which variables were specified 
-    # as `x` and `y` in `aes()`
-    x = NULL,
-    y = "Number of instances",
-    title = "The most common words said by Jules in Euphoria")
-
-euph_words |>
-  filter(char == "MADDY") |> # to display a specific character's vocabulary
-  count(word, sort = TRUE) |>
-  slice(1:20) |>
-  ggplot(aes(x = fct_reorder(word, n), y = n, color = word, fill = word)) +
-  geom_col() +
-  # Rotate graph
-  coord_flip() +
-  guides(color = "none", 
-         fill = "none") +
-  labs(
-    # Remove x variable label; notice that although coordinates are flipped, 
-    # the labels correspond to which variables were specified 
-    # as `x` and `y` in `aes()`
-    x = NULL,
-    y = "Number of instances",
-    title = "The most common words said by Maddy in Euphoria")
-
-euph_words |>
-  filter(char == "KAT") |> # to display a specific character's vocabulary
-  count(word, sort = TRUE) |>
-  slice(1:20) |>
-  ggplot(aes(x = fct_reorder(word, n), y = n, color = word, fill = word)) +
-  geom_col() +
-  # Rotate graph
-  coord_flip() +
-  guides(color = "none", 
-         fill = "none") +
-  labs(
-    # Remove x variable label; notice that although coordinates are flipped, 
-    # the labels correspond to which variables were specified 
-    # as `x` and `y` in `aes()`
-    x = NULL,
-    y = "Number of instances",
-    title = "The most common words said by Kat in Euphoria")
+    geom_col() +
+    coord_flip() +
+    # Rotate graph
+    guides(color = "none", 
+           fill = "none") +
+    labs(
+      # Remove x variable label; notice that although coordinates are flipped, 
+      # the labels correspond to which variables were specified 
+      # as `x` and `y` in `aes()`
+      x = NULL,
+      y = "Number of instances",
+      title = "The most common words said by top 5 characters in Euphoria"
+    ) +
+    facet_wrap(~char, scales = "free_y")
 ```
 
 ### South Park
