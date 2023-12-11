@@ -192,108 +192,6 @@ sp_lines_filtered |>
 <!-- End columns environment with matching length indicator-->
 
 
-
-## Most Common Words
-REMOVE IF WE LIKE FACETED
-
-### Gilmore Girls
-
-Insert?
-
-```{r}
-#| label: Gilmore Girls Most Common Words Visualization - Shani
-#| fig.align: left
-#| out.width: 100%
-
-#Customizing color palette
-nb.cols <- 20
-mycolors <- colorRampPalette(brewer.pal(8, "Pastel1"))(nb.cols)
-
-#plotting with palette for top 20 words by count 
-#excluding stop words and keeping words without the positivity ranking
-gg_filtered|>
-  count(word, sort = TRUE) |>
-  slice(1:20) |>
-  #fct_reorder to descending order it
-  ggplot(aes(x = fct_reorder(word, n), 
-             y = n, 
-             fill = as.factor(n))) +
-  geom_col() +
-  # Rotate graph
-  coord_flip() +
-  guides(fill = "none") +
-  labs(
-    x = NULL,
-    y = "Number of instances",
-    title = "Most Common Words for Gilmore Girls (Excl. Stop Words)") +
-  scale_fill_manual(values = mycolors) +
-  theme_light()
-```
-
-### Euphoria
-```{r}
-#| label: Most Common Words in Euphoria Overall
-#| fig.align: left
-#| out.width: 100%
-
-euph_words |>
-  count(word, sort = TRUE) |>
-  slice(1:20) |>
-  ggplot(aes(x = fct_reorder(word, n), y = n, color = word, fill = word)) +
-  geom_col() +
-  # Rotate graph
-  coord_flip() +
-  guides(color = "none", 
-         fill = "none") +
-  labs(
-    # Remove x variable label; notice that although coordinates are flipped, 
-    # the labels correspond to which variables were specified 
-    # as `x` and `y` in `aes()`
-    x = NULL,
-    y = "Number of instances",
-    title = "The most common words said in Euphoria")
-```
-
-### South Park
-```{r}
-#| label: Most Common Words and 3grams in South Park
-#| fig.align: left
-#| out.width: 100%
-
-sp_lines_filtered |>
-  count(word, sort = TRUE) |>
-  slice(1:20) |>
-  ggplot(aes(x = fct_reorder(word, n), 
-             y = n, 
-             color = word, 
-             fill = word)) +
-  geom_col() +
-  coord_flip() +
-  guides(color = "none", 
-         fill = "none") +
-  labs(
-    x = NULL,
-    y = "Number of instances",
-    title = "Most Common Words for South Park (Excl. Stop Words)")
-
-
-sp_lines_full_ngram |>
-  count(threegram, sort = TRUE) |>
-  slice(2:6) |> #NA for 1, annoying
-  ggplot(aes(x = fct_reorder(threegram, n), 
-             y = n, 
-             color = threegram, 
-             fill = threegram)) +
-  geom_col() +
-  coord_flip() +
-  guides(color = "none", 
-         fill = "none") +
-  labs(
-    x = NULL,
-    y = "Number of instances",
-    title = "Most Common ThreeGrams for South Park")
-```
-
 ## By Top 5 Characters
 In each of these shows we narrowed down the characters to the top 5 (or 4) main characters that contribute the most to the dialogue or culture of the show. This shows the breakdown of the most common words seen above into the most common characters, highlighting their similarities and differences.
 
@@ -511,10 +409,12 @@ sp_lines_filtered_pos_neg %>%
 ```
 
 # Sentiment Analysis
-To implement the sentiment analysis, we used tidy text databases called AFINN and nrc that describe how postive/negative a word is with a score from -5 to 5 and associate a number of categorical sentiments like fear, trust, joy, anticipation, and anger with the same words, respectively. There are only 2,477 words that exist in this database and it cannot take into account context and tone, revealing this analysis's limits.
+To implement the sentiment analysis, we used tidy text databases called AFINN and nrc that describe how postive/negative a word is with a score from -5 to 5 and associate a number of categorical sentiments like fear, trust, joy, anticipation, and anger with the same words, respectively. There are only 2,477 words that exist in this database and it cannot take into account context and tone, revealing this analysis's limits, as well as potentially removing certain words we deemed not a stop word
 
 ## Most Common Words by Sentiment 
-Instead of looking just at the most common words, we wanted to filter even more by dplyr's  sentiment package and look at the most common words that have an associated positivity value from the AFINN database. Using a color scale where green is postiive and red is negative, we can reevaluate the recurring themes and topics in the shows.
+Instead of looking just at the most common words, we wanted to filter even more by dplyr's  sentiment package and look at the most common words that have an associated positivity value from the AFINN database. Using a color scale where green is postive and red is negative, we can reevaluate the recurring themes and topics in the shows.
+
+
 
 ###Gilmore Girls
 
@@ -541,7 +441,7 @@ gg_filtered|>
     x = NULL,
     y = "Number of instances",
     fill = "Positivity rating",
-    title = "Most Common Words with Sentiment for Gilmore Girls (Excl. Stop Words)") +
+    title = "Most Common Words with Sentiment for Gilmore Girls") +
   scale_fill_brewer(palette = "RdYlGn") +
   theme_light()
 ```
@@ -575,11 +475,33 @@ euph_words |>
 ```
 
 ### South Park 
-INSERTTTT
+
+
 ```{r}
 #| label: Most common words sentiment analysis in South Park
 #| fig.align: left
 #| out.width: 100%
+
+sp_lines_filtered |>
+  count(word, sort = TRUE) |>
+  inner_join(pos_neg_val_sentiment, by = "word") |>
+  slice(1:20) |>
+  ggplot(aes(x = fct_reorder(word, n), 
+             y = n, 
+             fill = as.factor(value))) +
+  geom_col() +
+  # Rotate graph
+  coord_flip() +
+  scale_fill_brewer(palette = "RdYlGn") +
+  guides(
+    color = guide_legend(reverse = TRUE), 
+    fill = guide_legend(reverse = TRUE)) +
+  labs(
+    x = NULL,
+    y = "Number of instances",
+    fill = "Positivity rating",
+    title = "The most common positivity-rated words said in South Park") +
+  theme_light()
 
 ```
 
@@ -670,8 +592,7 @@ sp_lines_filtered_sentiments|>
   count(sentiment, sort = TRUE) |>
   slice(4:11) |> #1 is NA, 2 and 3 are pos/neg (which aren't really indicative of anything)
   ggplot(aes(x = fct_reorder(sentiment, n), 
-             y = n, 
-             color = sentiment, #maybe important... bad words red, good words green?
+             y = n, #maybe important... bad words red, good words green?
              fill = sentiment)) +
   geom_col() +
   coord_flip() +
@@ -681,8 +602,7 @@ sp_lines_filtered_sentiments|>
     x = NULL,
     y = "Number of instances",
     title = "Most Common Sentiments in South Park") +
-  scale_fill_manual(values = mycolors) +
-  theme_light()
+  scale_fill_manual(values = mycolors)
 
 
 sp_characters %>%
