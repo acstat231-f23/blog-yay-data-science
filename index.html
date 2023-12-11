@@ -51,7 +51,7 @@ ul.task-list li input[type="checkbox"] {
    
   <ul>
   <li><a href="#intro" id="toc-intro" class="nav-link active" data-scroll-target="#intro">Intro</a></li>
-  <li><a href="#content" id="toc-content" class="nav-link" data-scroll-target="#content">Content</a>
+  <li><a href="#text-analysis" id="toc-text-analysis" class="nav-link" data-scroll-target="#text-analysis">Text Analysis</a>
   <ul class="collapse">
   <li><a href="#faceting-formatting-of-most-common-words" id="toc-faceting-formatting-of-most-common-words" class="nav-link" data-scroll-target="#faceting-formatting-of-most-common-words">Faceting Formatting of Most Common Words</a></li>
   <li><a href="#most-common-words" id="toc-most-common-words" class="nav-link" data-scroll-target="#most-common-words">Most Common Words</a>
@@ -66,12 +66,16 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#euphoria-2" id="toc-euphoria-2" class="nav-link" data-scroll-target="#euphoria-2">Euphoria</a></li>
   <li><a href="#south-park-2" id="toc-south-park-2" class="nav-link" data-scroll-target="#south-park-2">South Park</a></li>
   </ul></li>
+  </ul></li>
+  <li><a href="#sentiment-analysis" id="toc-sentiment-analysis" class="nav-link" data-scroll-target="#sentiment-analysis">Sentiment Analysis</a>
+  <ul class="collapse">
   <li><a href="#most-common-words-by-sentiment" id="toc-most-common-words-by-sentiment" class="nav-link" data-scroll-target="#most-common-words-by-sentiment">Most Common Words by Sentiment</a>
   <ul class="collapse">
   <li><a href="#euphoria-3" id="toc-euphoria-3" class="nav-link" data-scroll-target="#euphoria-3">Euphoria</a></li>
   <li><a href="#south-park-3" id="toc-south-park-3" class="nav-link" data-scroll-target="#south-park-3">South Park</a></li>
   </ul></li>
-  <li><a href="#sentiment-analysis" id="toc-sentiment-analysis" class="nav-link" data-scroll-target="#sentiment-analysis">Sentiment Analysis</a>
+  <li><a href="#positivity-scores" id="toc-positivity-scores" class="nav-link" data-scroll-target="#positivity-scores">Positivity Scores</a></li>
+  <li><a href="#categorical-sentiment-analysis" id="toc-categorical-sentiment-analysis" class="nav-link" data-scroll-target="#categorical-sentiment-analysis">Categorical Sentiment Analysis</a>
   <ul class="collapse">
   <li><a href="#euphoria-4" id="toc-euphoria-4" class="nav-link" data-scroll-target="#euphoria-4">Euphoria</a></li>
   <li><a href="#south-park-4" id="toc-south-park-4" class="nav-link" data-scroll-target="#south-park-4">South Park</a></li>
@@ -114,16 +118,17 @@ ul.task-list li input[type="checkbox"] {
 <section id="intro" class="level1">
 <h1>Intro</h1>
 <p>What makes a TV show popular? While that is a multifaceted question with no straightforward answer, we want to find similarities and differences between three vastly different and very successful TV shows (Gilmore Girls, Euphoria, South Park) to see what makes them so popular. To look into the “why,” we have done text and sentiment analysis of the scripts of these shows and contextualized these analyses with our own interpretations as to why these words and general sentiments might resonate with viewers. Having seen these shows, we are able to confirm whether the analyses accurately depict the essence and topics of the series. First, we had to webscrape these scripts and then we cleaned up the scripts and removed the stop words. We then performed the analyses to reach a conclusion about how and why such disparate TV shows are so appealing to the general public.</p>
-</section>
-<section id="content" class="level1">
-<h1>Content</h1>
-<p>You can include text, <code>code</code>, and output as usual. Remember to take full advantage of Markdown and its <a href="https://www.markdownguide.org/basic-syntax/">syntax shortcuts</a>.</p>
-<p>##Summaries of Each Show</p>
+<p>##Summaries of Each Show Here are summaries of each of the shows for context before we get into the visualizations and analyses!</p>
 <p>###Gilmore Girls Gilmore Girls is a feel-good drama comedy series focused on the relationship between a young single mother and her teenage daughter and their lives in a small New England town in the late 90s/early 2000s. With quirky characters in this town and complex relationships with parents and extended family, Gilmore Girls follows this unique mother-daughter duo through academic, professional, romantic, and existential ups and downs. This show has a very characteristic tone, with a lot of pop culture references and speedy, witty banter in the dialogue. The sense of community, ambition, independence, and love has left a lasting effect on millions of viewers.</p>
 <p>###Euphoria Euphoria is a teen drama series known for its graphic depiction of mature topics, especially sexual abuse and drug use, as well as its focus on cinematography and scoring. It follows the lives of Rue and her high-school classmates as they navigate a variety of challenges from self-confidence and sexuality issues to addiction, grief, and abuse. The show’s distinct visual style targets and portrays Gen Z in a way that has significantly influenced trends in fashion, makeup, and social media.</p>
 <p>###South Park South Park is a sitcom infamous for its exploration on offensive and controversial topics in a satirical fashion. The show centers around four fourth-graders ((Eric) Cartman, Kyle, Stan, Kenny) and their adventures. (ADD REASON WHY IT’S POPULAR)</p>
+</section>
+<section id="text-analysis" class="level1">
+<h1>Text Analysis</h1>
+<p>EXPLAIN TEXT ANALYSIS PLAN</p>
 <section id="faceting-formatting-of-most-common-words" class="level2">
 <h2 class="anchored" data-anchor-id="faceting-formatting-of-most-common-words">Faceting Formatting of Most Common Words</h2>
+<p>Here are the most common words in these three shows after removing the stop words (using the dplyr stop words data set and individually selected stop words that were not included in that data set).</p>
 <!-- Begin columns environment -->
 <div style="display: flex; font-size: large;">
 <!-- Create a column -->
@@ -180,7 +185,7 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="most-common-words" class="level2">
 <h2 class="anchored" data-anchor-id="most-common-words">Most Common Words</h2>
-<p>EXPLAIN THIS</p>
+<p>REMOVE IF WE LIKE FACETED</p>
 <section id="gilmore-girls-1" class="level3">
 <h3 class="anchored" data-anchor-id="gilmore-girls-1">Gilmore Girls</h3>
 <p>Insert?</p>
@@ -228,9 +233,10 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="by-top-5-characters" class="level2">
 <h2 class="anchored" data-anchor-id="by-top-5-characters">By Top 5 Characters</h2>
-<p>EXPLAIN TOP 5 CHARACTERS</p>
+<p>In each of these shows we narrowed down the characters to the top 5 (or 4) main characters that contribute the most to the dialogue or culture of the show. This shows the breakdown of the most common words seen above into the most common characters, highlighting their similarities and differences.</p>
 <section id="gilmore-girls-2" class="level3">
 <h3 class="anchored" data-anchor-id="gilmore-girls-2">Gilmore Girls</h3>
+<p>The top 5 characters in Gilmore Girls: Lorelai and Rory, the mother and daughter duo. Luke, the owner of the town diner Lorelai and Rory frequent (and Lorelai’s future boyfriend/husband). Emily, Lorelai’s mother and Rory’s grandmother. Sookie, Lorelai’s best friend, the chef at the inn that they work at/run together.</p>
 <div class="cell">
 <div class="cell-output-display">
 <p><img src="index_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="672"></p>
@@ -239,6 +245,7 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="euphoria-2" class="level3">
 <h3 class="anchored" data-anchor-id="euphoria-2">Euphoria</h3>
+<p>EXPLAIN THE CHARACTERS</p>
 <div class="cell" data-layout-align="left">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-left">
@@ -279,7 +286,7 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="south-park-2" class="level3">
 <h3 class="anchored" data-anchor-id="south-park-2">South Park</h3>
-<p>This is a bit different as in south park, we mainly revolve around these four characters (one of them barely speaks, but has a large cultural impact). So, this analysis is a bit different</p>
+<p>This is a bit different as in south park, we mainly revolve around these four characters (one of them barely speaks, but has a large cultural impact). So, this analysis is a bit different. BRIEFLY EXPLAIN THE OTHER CHARACTERS TOO?</p>
 <div class="cell" data-layout-align="left">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-left">
@@ -321,52 +328,77 @@ ul.task-list li input[type="checkbox"] {
 </div>
 </section>
 </section>
+</section>
+<section id="sentiment-analysis" class="level1">
+<h1>Sentiment Analysis</h1>
+<p>To implement the sentiment analysis, we used tidy text databases called AFINN and nrc that describe how postive/negative a word is with a score from -5 to 5 and associate a number of categorical sentiments like fear, trust, joy, anticipation, and anger with the same words, respectively. There are only 2,477 words that exist in this database and it cannot take into account context and tone, revealing this analysis’s limits.</p>
 <section id="most-common-words-by-sentiment" class="level2">
 <h2 class="anchored" data-anchor-id="most-common-words-by-sentiment">Most Common Words by Sentiment</h2>
-<p>EXPLAIN THIS!</p>
+<p>Instead of looking just at the most common words, we wanted to filter even more by dplyr’s sentiment package and look at the most common words that have an associated positivity value from the AFINN database. Using a color scale where green is postiive and red is negative, we can reevaluate the recurring themes and topics in the shows.</p>
 <p>###Gilmore Girls</p>
 <div class="cell" data-layout-align="left">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-left">
 <figure class="figure">
-<p><img src="index_files/figure-html/EXAMPLE%20OF%20SENTIMENT%20ANALYSIS%20IN%20GILMORE%20GIRLS-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<p><img src="index_files/figure-html/Most%20common%20words%20sentiment%20analysis%20in%20Gilmore%20girls-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
 </div>
 <section id="euphoria-3" class="level3">
 <h3 class="anchored" data-anchor-id="euphoria-3">Euphoria</h3>
-<div class="cell">
+<div class="cell" data-layout-align="left">
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid" width="672"></p>
+<div class="quarto-figure quarto-figure-left">
+<figure class="figure">
+<p><img src="index_files/figure-html/Most%20common%20words%20sentiment%20analysis%20in%20Euphoria-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+</figure>
+</div>
 </div>
 </div>
 </section>
 <section id="south-park-3" class="level3">
 <h3 class="anchored" data-anchor-id="south-park-3">South Park</h3>
-<p>Insert</p>
+<p>INSERTTTT</p>
 </section>
 </section>
-<section id="sentiment-analysis" class="level2">
-<h2 class="anchored" data-anchor-id="sentiment-analysis">Sentiment Analysis</h2>
-<p>EXPLAIN OUR SENTIMENT ANALYSIS</p>
-<p>###Gilmore Girls</p>
-<div class="cell">
-<div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid" width="672"></p>
-</div>
+<section id="positivity-scores" class="level2">
+<h2 class="anchored" data-anchor-id="positivity-scores">Positivity Scores</h2>
+<p>EXPLAIN POSITIVITY SCORES</p>
+<div class="cell" data-layout-align="left">
 <div class="cell-output cell-output-stdout">
 <pre><code>The mean positivity value of Gilmore Girls is 0.2181001</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>The mean positivity value of Euphoria is -1.372624</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>The mean positivity value of South Park is -0.5185825</code></pre>
+</div>
+</div>
+</section>
+<section id="categorical-sentiment-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="categorical-sentiment-analysis">Categorical Sentiment Analysis</h2>
+<p>EXPLAIN OUR categorical SENTIMENT ANALYSIS</p>
+<p>###Gilmore Girls</p>
+<div class="cell" data-layout-align="left">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-left">
+<figure class="figure">
+<p><img src="index_files/figure-html/Gilmore%20Girls%20categorical%20Sentiment%20Analysis%20Visualization-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+</figure>
+</div>
 </div>
 </div>
 <section id="euphoria-4" class="level3">
 <h3 class="anchored" data-anchor-id="euphoria-4">Euphoria</h3>
-<div class="cell">
+<div class="cell" data-layout-align="left">
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid" width="672"></p>
+<div class="quarto-figure quarto-figure-left">
+<figure class="figure">
+<p><img src="index_files/figure-html/Euphoria%20categorical%20Sentiment%20Analysis%20Visualization-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+</figure>
 </div>
-<div class="cell-output cell-output-stdout">
-<pre><code>The mean positivity value of Euphoria is -1.372624</code></pre>
 </div>
 </div>
 </section>
@@ -376,12 +408,9 @@ ul.task-list li input[type="checkbox"] {
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-left">
 <figure class="figure">
-<p><img src="index_files/figure-html/Sentiment%20Analysis%20for%20South%20Park-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<p><img src="index_files/figure-html/South%20Park%20categorical%20Sentiment%20Analysis%20Visualization-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
 </figure>
 </div>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>The mean positivity value of South Park is -0.5185825</code></pre>
 </div>
 <div class="cell-output-display">
 <table class="table table-sm table-striped small" data-quarto-postprocess="true">
@@ -429,6 +458,9 @@ ul.task-list li input[type="checkbox"] {
 
 </div>
 </div>
+<p>#Analysis and Conclusion</p>
+<p>##Analysis Talk specifics, values, words</p>
+<p>##Conclusion big takeaways, what do people like, why do they like it? where do we move from here? if we were to continue use new sentiment analysis database to get more accurate analyses/values/visualizations?</p>
 </section>
 </section>
 </section>

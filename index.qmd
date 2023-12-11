@@ -35,16 +35,14 @@ library(kableExtra)
 
 What makes a TV show popular? While that is a multifaceted question with no straightforward answer, we want to find similarities and differences between three vastly different and very successful TV shows (Gilmore Girls, Euphoria, South Park) to see what makes them so popular. To look into the "why," we have done text and sentiment analysis of the scripts of these shows and contextualized these analyses with our own interpretations as to why these words and general sentiments might resonate with viewers. Having seen these shows, we are able to confirm whether the analyses accurately depict the essence and topics of the series. First, we had to webscrape these scripts and then we cleaned up the scripts and removed the stop words. We then performed the analyses to reach a conclusion about how and why such disparate TV shows are so appealing to the general public.
 
-# Text Analysis
-
-You can include text, `code`, and output as usual. Remember to take full advantage of Markdown and its [syntax shortcuts](https://www.markdownguide.org/basic-syntax/).
-
 ```{r}
+#For everyone
+load(file="pos_neg_val_sentiment.Rdata")
 #Gilmore Girls
 load(file="gg_filtered.Rdata")
 load(file="gg_filtered_sentiments.Rdata")
 load(file="gg_filtered_pos_neg.Rdata")
-load(file="pos_neg_val_sentiment.Rdata")
+load(file="gg_character_data.Rdata")
 #Euphoria
 load(file = "euph_words.Rdata")
 load(file = "euph_sentiments.Rdata")
@@ -70,6 +68,8 @@ Euphoria is a teen drama series known for its graphic depiction of mature topics
 ###South Park
 South Park is a sitcom infamous for its exploration on offensive and controversial topics in a satirical fashion. The show centers around four fourth-graders ((Eric) Cartman, Kyle, Stan, Kenny) and their adventures. (ADD REASON WHY IT'S POPULAR) 
 
+# Text Analysis
+EXPLAIN TEXT ANALYSIS PLAN
 
 ## Faceting Formatting of Most Common Words
 Here are the most common words in these three shows after removing the stop words (using the dplyr stop words data set and individually selected stop words that were not included in that data set).
@@ -194,7 +194,7 @@ sp_lines_filtered |>
 
 
 ## Most Common Words
-EXPLAIN THIS
+REMOVE IF WE LIKE FACETED
 
 ### Gilmore Girls
 
@@ -565,6 +565,7 @@ EXPLAIN POSITIVITY SCORES
 #| fig.align: left
 #| out.width: 100%
 
+
 #finding the overall sentiment of the show (score) 
 cat("The mean positivity value of Gilmore Girls is", mean(gg_filtered_pos_neg$value))
 cat("The mean positivity value of Euphoria is", mean(euph_pos_neg$value))
@@ -578,7 +579,9 @@ EXPLAIN OUR categorical SENTIMENT ANALYSIS
 ###Gilmore Girls
 
 ```{r}
-#Gilmore Girls Sentiment Analysis Visualization and Value - Shani
+#| label: Gilmore Girls categorical Sentiment Analysis Visualization
+#| fig.align: left
+#| out.width: 100%
 
 #Customizing color palette
 nb.cols <- 8
@@ -607,6 +610,10 @@ gg_filtered_sentiments|>
 
 ### Euphoria
 ```{r}
+#| label: Euphoria categorical Sentiment Analysis Visualization
+#| fig.align: left
+#| out.width: 100%
+
 euph_sentiments |>
   filter(sentiment != "positive" & sentiment != "negative") |>
   count(sentiment, sort = TRUE) |>
@@ -628,7 +635,7 @@ euph_sentiments |>
 
 ### South Park
 ```{r}
-#| label: Sentiment Analysis for South Park
+#| label: South Park categorical Sentiment Analysis Visualization
 #| fig.align: left
 #| out.width: 100%
 
@@ -663,4 +670,11 @@ sp_characters %>%
 
 ```
 
+#Analysis and Conclusion
+
+##Analysis
+Talk specifics, values, words
+
+##Conclusion
+big takeaways, what do people like, why do they like it? where do we move from here? if we were to continue use new sentiment analysis database to get more accurate analyses/values/visualizations?
 
