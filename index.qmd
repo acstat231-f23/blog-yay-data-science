@@ -59,6 +59,7 @@ load(file="sp_characters.Rdata")
 
 
 ##Summaries of Each Show
+Here are summaries of each of the shows for context before we get into the visualizations and analyses!
 
 ###Gilmore Girls
 Gilmore Girls is a feel-good drama comedy series focused on the relationship between a young single mother and her teenage daughter and their lives in a small New England town in the late 90s/early 2000s. With quirky characters in this town and complex relationships with parents and extended family, Gilmore Girls follows this unique mother-daughter duo through academic, professional, romantic, and existential ups and downs. This show has a very characteristic tone, with a lot of pop culture references and speedy, witty banter in the dialogue. The sense of community, ambition, independence, and love has left a lasting effect on millions of viewers.
@@ -71,6 +72,7 @@ South Park is a sitcom infamous for its exploration on offensive and controversi
 
 
 ## Faceting Formatting of Most Common Words
+Here are the most common words in these three shows after removing the stop words (using the dplyr stop words data set and individually selected stop words that were not included in that data set).
 
 <!-- Begin columns environment -->
 :::::: {style="display: flex; font-size: large;"}
@@ -293,9 +295,10 @@ sp_lines_full_ngram |>
 ```
 
 ## By Top 5 Characters
-EXPLAIN TOP 5 CHARACTERS
+In each of these shows we narrowed down the characters to the top 5 (or 4) main characters that contribute the most to the dialogue or culture of the show. This shows the breakdown of the most common words seen above into the most common characters, highlighting their similarities and differences.
 
 ### Gilmore Girls
+The top 5 characters in Gilmore Girls: Lorelai and Rory, the mother and daughter duo. Luke, the owner of the town diner Lorelai and Rory frequent (and Lorelai's future boyfriend/husband). Emily, Lorelai's mother and Rory's grandmother. Sookie, Lorelai's best friend, the chef at the inn that they work at/run together.
 ```{r}
 #Gilmore Girls Most Common Words by Character Visualization - Shani
 
@@ -335,6 +338,8 @@ gg_filtered|>
 ```
 
 ### Euphoria
+EXPLAIN THE CHARACTERS
+
 ```{r}
 #| label: Most Common Words by the Top 5 Characters in Euphoria
 #| fig.align: left
@@ -433,7 +438,7 @@ euph_words |>
 
 ### South Park
 
-This is a bit different as in south park, we mainly revolve around these four characters (one of them barely speaks, but has a large cultural impact). So, this analysis is a bit different
+This is a bit different as in south park, we mainly revolve around these four characters (one of them barely speaks, but has a large cultural impact). So, this analysis is a bit different. BRIEFLY EXPLAIN THE OTHER CHARACTERS TOO?
 
 ```{r}
 #| label: Sentiments Based on Main Character for South Park
@@ -483,8 +488,7 @@ sp_lines_filtered_pos_neg %>%
 
 
 ## Most Common Words by Sentiment 
-EXPLAIN THIS!
-
+Instead of looking just at the most common words, we wanted to filter even more by dplyr's  sentiment package 
 ###Gilmore Girls
 
 ```{r}
