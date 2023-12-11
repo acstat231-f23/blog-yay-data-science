@@ -47,6 +47,8 @@ load(file="gg_filtered_pos_neg.Rdata")
 load(file="pos_neg_val_sentiment.Rdata")
 #Euphoria
 load(file = "euph_words.Rdata")
+load(file = "euph_sentiments.Rdata")
+load(file = "euph_pos_neg.Rdata")
 #South Park
 load(file="sp_lines_filtered.Rdata")
 load(file="sp_lines_full_ngram.Rdata")
