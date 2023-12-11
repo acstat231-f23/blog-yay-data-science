@@ -441,7 +441,7 @@ This is a bit different as in south park, we mainly revolve around these four ch
 
 #followed shani's code, except since kenny doesn't talk much (still main character), it's important to get him
 nb.cols <- 51 #R says it needs 51, so I edited it
-mycolors_sp <- colorRampPalette(brewer.pal(8, "Pastel1"))(nb.cols)
+mycolors_sp <- colorRampPalette(brewer.pal(8, "Set1"))(nb.cols)
 
 
 sp_main_characters <- data.frame(Character  = c("Cartman", "Kenny", "Stan", "Kyle"))
@@ -454,13 +454,11 @@ sp_lines_filtered |>
   slice(1:15) |>
   ggplot(aes(x = fct_reorder(word, n), 
              y = n, 
-             color = word, 
              fill = as.factor(n))) +
   geom_col() +
   # Rotate graph
   coord_flip() +
-  guides(color = "none", 
-         fill = "none") +
+  guides(fill = "none") +
   labs(
     x = NULL,
     y = "Number of instances",
