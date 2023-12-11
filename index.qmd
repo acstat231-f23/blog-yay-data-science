@@ -149,7 +149,7 @@ euph_words |>
     y = "Number of instances",
     title = "The most common words said in Euphoria (Excl. Stop Words)") +
   scale_fill_manual(values = mycolors) +
-  theme_classic()
+  theme_light()
 ```
 
 :::
@@ -300,7 +300,9 @@ In each of these shows we narrowed down the characters to the top 5 (or 4) main 
 ### Gilmore Girls
 The top 5 characters in Gilmore Girls: Lorelai and Rory, the mother and daughter duo. Luke, the owner of the town diner Lorelai and Rory frequent (and Lorelai's future boyfriend/husband). Emily, Lorelai's mother and Rory's grandmother. Sookie, Lorelai's best friend, the chef at the inn that they work at/run together.
 ```{r}
-#Gilmore Girls Most Common Words by Character Visualization - Shani
+#| label: Gilmore Girls Most Common Words by Character Visualization 
+#| fig.align: left
+#| out.width: 100%
 
 #finding top 5 characters
 top_5_chars <- gg_filtered |>
@@ -335,6 +337,17 @@ gg_filtered|>
     facet_wrap(facets = ~reorder(str_to_title(character), -n), scales = "free_y") +
   scale_fill_manual(values = mycolors) +
   theme_light()
+
+#Character data table
+gg_character_data |>
+  kable(booktabs = TRUE, digits = 2, col.names = c(
+    "Character",
+    "Filtered Words",
+    "Unfiltered Words",
+    "% of all Filtered words",
+    "% of all Unfiltered words"
+  )) |>
+  kable_styling()
 ```
 
 ### Euphoria
@@ -546,7 +559,8 @@ euph_words |>
     x = NULL,
     y = "Number of instances",
     fill = "Positivity rating",
-    title = "The most common positivity-rated words said in Euphoria")
+    title = "The most common positivity-rated words said in Euphoria") +
+  theme_light()
 ```
 
 ### South Park 
@@ -565,6 +579,7 @@ EXPLAIN POSITIVITY SCORES
 #| fig.align: left
 #| out.width: 100%
 
+#make into kable table
 
 #finding the overall sentiment of the show (score) 
 cat("The mean positivity value of Gilmore Girls is", mean(gg_filtered_pos_neg$value))
@@ -629,7 +644,8 @@ euph_sentiments |>
   labs(
     x = NULL,
     y = "Number of instances",
-    title = "Most Common Sentiments in Euphoria")
+    title = "Most Common Sentiments in Euphoria") +
+  theme_light()
 
 ```
 
