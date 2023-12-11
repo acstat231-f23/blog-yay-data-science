@@ -107,6 +107,8 @@ euph_lines_full <- scripts_filtered |>
 euph_words_full <- euph_lines_full |>
   separate(col = text, into = c("char", "line"), sep = ": ?", remove = TRUE) |>
   unnest_tokens(output = word, input = line)
+
+save(euph_words_full, file = "euph_words_full.Rdata")
 ```
 
 ```{r}
