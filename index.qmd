@@ -182,17 +182,18 @@ euph_words |>
 #| fig.align: left
 #| out.width: 100%
 
+#shani's code
 nb.cols <- 20
 mycolors <- colorRampPalette(brewer.pal(6, "Set1"))(nb.cols)
 
 sp_lines_filtered |>
   count(word, sort = TRUE) |>
-  slice(1:20) |>
+  slice(1:20) |> #20 words nice balance between usefulness and readability
   ggplot(aes(x = fct_reorder(word, n), 
              y = n,
              fill = as.factor(n))) +
   geom_col() +
-  coord_flip() +
+  coord_flip() + #nicer visualization to prevent headturning
   guides(fill = "none") +
   labs(
     x = NULL,
@@ -305,8 +306,8 @@ euph_words |>
 #| out.width: 100%
 
 sp_lines_filtered |>
-  count(word, sort = TRUE) |>
-  inner_join(pos_neg_val_sentiment, by = "word") |>
+  count(word, sort = TRUE) |> #each word counted up
+  inner_join(pos_neg_val_sentiment, by = "word") |> #use AFINN
   slice(1:20) |>
   ggplot(aes(x = fct_reorder(word, n), 
              y = n, 
@@ -333,13 +334,15 @@ sp_lines_filtered |>
 <!-- End columns environment with matching length indicator-->
 
 ## Positivity Scores
-EXPLAIN POSITIVITY SCORES
+These mean positivity scores represent the overall sentiment of each three shows as a whole. We would expect a neutral show to have an average score of 0, as all the positive (1 to 5) and negative (-5 to -1) scores to cancel out. However, we can see that Gilmore Girls is slightly positive, while South Park and Euphoria are more negative. 
+
+
 ```{r}
 #| label: Positivity Score table in all the shows
 #| fig.align: left
 #| out.width: 100%
 
-#make into kable table
+#kable table to look nicer
 
 shows <- c("Gilmore_Girls", "Euphoria", "South_Park")
 values <- c(mean(gg_filtered_pos_neg$value), 
@@ -347,6 +350,7 @@ values <- c(mean(gg_filtered_pos_neg$value),
             mean(sp_lines_filtered_pos_neg$value, na.rm = TRUE)
             )
 
+#create dataframe of these values to report nicely in a kable chart
 positivty_scores <- data.frame(shows, values)
 
 positivty_scores |>
@@ -357,7 +361,7 @@ positivty_scores |>
   kable_styling()
 
 
-#finding the overall sentiment of the show (score) 
+#old code to show what we were using beforehand
 # cat("The mean positivity value of Gilmore Girls is", mean(gg_filtered_pos_neg$value))
 # cat("The mean positivity value of Euphoria is", mean(euph_pos_neg$value))
 # cat("The mean positivity value of South Park is", mean(sp_lines_filtered_pos_neg$value, na.rm = TRUE))
@@ -459,9 +463,9 @@ mycolors <- colorRampPalette(brewer.pal(6, "Set1"))(nb.cols)
 
 sp_lines_filtered_sentiments|>
   count(sentiment, sort = TRUE) |>
-  slice(4:11) |> #1 is NA, 2 and 3 are pos/neg (which aren't really indicative of anything)
+  slice(4:11) |> #1 is NA, 2 and 3 are pos/neg (which aren't really indicative of anything). Alternative to using Filter
   ggplot(aes(x = fct_reorder(sentiment, n), 
-             y = n, #maybe important... bad words red, good words green?
+             y = n, 
              fill = sentiment)) +
   geom_col() +
   coord_flip() +
@@ -620,8 +624,7 @@ euph_pos_neg |>
 
 ### South Park
 
-Out of the four main boys of South Park, only one is not in the top 4 (Kenny) as he rarely speaks. However, since he is an integral character (front and center in posters), it is important to analyze what he says to better understand the show’s popularity in general. Below we see the most common words by each of the four boys. As we can see, these boys are closely knit (saying dude a lot). Cartman is the most offensive when it comes to saying specific words in context, while Kenny seems to use only interjections in his speech. Stan and Kyle are the more grounded characters, giving us a balance and a foil to the other two. 
-
+As mentioned, the four main characters of South Park consists of the four boys (Cartman, Kenny, Stan, Kyle). Cartman is a fat, psychopathic child raised by an enabling single mother. Kenny is usually made fun of for being poor, and is infamous for dying in gruesome ways. Stan is your average American with a nuclear family, although that does not make him normal at all. Kyle is a Jewish-American who conflicts heavily with Cartman over his heritage. 
 
 ```{r}
 #| label: Sentiments Based on Main Character for South Park
@@ -633,7 +636,7 @@ nb.cols <- 51 #R says it needs 51, so I edited it
 mycolors_sp <- colorRampPalette(brewer.pal(8, "Set1"))(nb.cols)
 
 
-sp_main_characters <- data.frame(Character  = c("Cartman", "Kenny", "Stan", "Kyle"))
+sp_main_characters <- data.frame(Character  = c("Cartman", "Kenny", "Stan", "Kyle")) 
 sp_char_names <- str_to_title(sp_main_characters[["Character"]])
 
 sp_lines_filtered |>
@@ -688,6 +691,17 @@ sp_lines_filtered_pos_neg %>%
 ## Analysis
 Talk specifics, values, words
 
+
+
+
+For South Park, the overall negative positivity score (both by the show as a whole and by the four main characters) reflects its status as a satirical comedy unafraid to make bold statements. However, that also means that there is a nice balance of heart-warming moments as well (compared to a show like Euphoria which these moments are few and far between). This is reflected on the sentiments based on the most common (non-stop) words and the categorical sentiment analysis (eg. fear and joy were very close in terms of instances). This mix of emotion, as well as the balance of the main characters' characteristics likely draws and maintains its fanbase. 
+
 ## Conclusion
 big takeaways, what do people like, why do they like it? where do we move from here? if we were to continue use new sentiment analysis database to get more accurate analyses/values/visualizations?
 
+
+
+People like South Park for its unapologetic tellings of modern stories with a balanced character selection that isn't afraid to say what they want to say, but aren't complete potty mouths. 
+
+
+For future analyses, using some sort of machine learning to get a sentiment analysis tailored to shows rather than being a one-size-fits-all database would be more effective at showing context behind certain words. Although we agree with most of the values associated to words in the AFINN database, words such as "bitch" were placed more negative than words like "fuck". 
