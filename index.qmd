@@ -610,12 +610,14 @@ sp_lines_filtered |>
   group_by(Character) |>
   count(word, sort = TRUE) |>
   slice(1:15) |>
+  mutate(word = reorder_within(word, n, Character))|>
   ggplot(aes(x = fct_reorder(word, n), 
              y = n, 
              fill = as.factor(n))) +
   geom_col() +
   # Rotate graph
   coord_flip() +
+  scale_x_reordered() +
   guides(fill = "none") +
   labs(
     x = NULL,
