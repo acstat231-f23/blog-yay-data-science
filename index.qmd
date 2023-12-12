@@ -491,7 +491,7 @@ gg_filtered|>
   geom_col() +
   # Rotate graph
   coord_flip() +  
-  scale_x_reordered()+
+  scale_x_reordered() +
   guides(fill = "none") +
   labs(
     x = NULL,
@@ -534,7 +534,7 @@ The five characters who speak the most in Euphoria are Rue, Nate, Jules, Maddy, 
 #| fig.align: left
 #| out.width: 100%
 
-nb.cols <- 46
+nb.cols <- 75
 mycolors <- colorRampPalette(brewer.pal(9, "BuPu"))(nb.cols)
 
 top_chars <- euph_words |>
@@ -546,9 +546,11 @@ euph_words |>
   group_by(char) |>
   count(word, sort = TRUE) |>
   slice(1:15) |>
+  mutate(word = reorder_within(word, n, char)) |>
   ggplot(aes(x = fct_reorder(word, n), y = n, fill = word)) +
     geom_col() +
     coord_flip() +
+    scale_x_reordered() +
     # Rotate graph
     guides(fill = "none") +
     labs(
@@ -580,6 +582,7 @@ euph_pos_neg |>
   filter(char %in% top_chars$char) |>
   group_by(str_to_title(char)) |>
   summarize(mean = mean(value, na.rm = TRUE)) |>
+  arrange(factor(`str_to_title(char)`, levels = c("Rue","Nate","Jules","Maddy","Kat"))) |>
   kable(booktabs = TRUE, digits = 3, col.names = c(
     "Character",
     "Overall Mean of Sentiment Throughout the show"
