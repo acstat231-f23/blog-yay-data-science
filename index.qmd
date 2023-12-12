@@ -70,7 +70,7 @@ Gilmore Girls is a feel-good drama comedy series focused on the relationship bet
 Euphoria is a teen drama series known for its graphic depiction of mature topics, especially sexual abuse and drug use, as well as its focus on cinematography and scoring. It follows the lives of Rue and her high-school classmates as they navigate a variety of challenges from self-confidence and sexuality issues to addiction, grief, and abuse. The show's distinct visual style targets and portrays Gen Z in a way that has significantly influenced trends in fashion, makeup, and social media.
 
 ### South Park
-South Park is a sitcom infamous for its exploration on offensive and controversial topics in a satirical fashion. The show centers around four fourth-graders ((Eric) Cartman, Kyle, Stan, Kenny) and their adventures. (ADD REASON WHY IT'S POPULAR) 
+South Park South Park is a satirical sitcom infamous for its exploration on offensive and controversial topics. The show centers around four fourth-graders (Cartman, Kyle, Stan, Kenny) and their adventures throughout their town of South Park, CO. The story can range from being unwillingly transported to a foreign country to commentaries on American politics. 
 
 ## Webscraping
 To obtain these scripts to analyze, we each individually found a website containing the episode scripts and webscraped them into a dataframe.
@@ -82,7 +82,7 @@ INSERT
 https://euphoria.fandom.com/wiki/Euphoria_Wiki
 
 ### South Park
-INSERT
+South Park has a total of 321 episodes (excluding specials, movies, etc) that are each around 20-25 minutes long. The Fandom Wikipedia has the scripts for all these shows, so scraping each table from each of these links would get us all the lines. We created a list of links based on the episode titles (scraped from wikipedia) and then iterated through all these links to webscrape all the lines. Most of the episodes were retrieved, but through this method, there were certain episodes we were unable to get (88.1%). However, this is more than enough to get the general idea of South Park, so we continued. Then, we wrangled to get rid of stage directions and split by word. 
 
 # Text Analysis
 EXPLAIN TEXT ANALYSIS PLAN
@@ -341,10 +341,26 @@ EXPLAIN POSITIVITY SCORES
 
 #make into kable table
 
+shows <- c("Gilmore_Girls", "Euphoria", "South_Park")
+values <- c(mean(gg_filtered_pos_neg$value), 
+            mean(euph_pos_neg$value), 
+            mean(sp_lines_filtered_pos_neg$value, na.rm = TRUE)
+            )
+
+positivty_scores <- data.frame(shows, values)
+
+positivty_scores |>
+  kable(booktabs = TRUE, digits = 3, col.names = c(
+    "Show",
+    "Positivity Score"
+  )) |>
+  kable_styling()
+
+
 #finding the overall sentiment of the show (score) 
-cat("The mean positivity value of Gilmore Girls is", mean(gg_filtered_pos_neg$value))
-cat("The mean positivity value of Euphoria is", mean(euph_pos_neg$value))
-cat("The mean positivity value of South Park is", mean(sp_lines_filtered_pos_neg$value, na.rm = TRUE))
+# cat("The mean positivity value of Gilmore Girls is", mean(gg_filtered_pos_neg$value))
+# cat("The mean positivity value of Euphoria is", mean(euph_pos_neg$value))
+# cat("The mean positivity value of South Park is", mean(sp_lines_filtered_pos_neg$value, na.rm = TRUE))
 
 ```
 
@@ -570,7 +586,8 @@ euph_pos_neg |>
 
 ### South Park
 
-This is a bit different as in south park, we mainly revolve around these four characters (one of them barely speaks, but has a large cultural impact). So, this analysis is a bit different. BRIEFLY EXPLAIN THE OTHER CHARACTERS TOO?
+Out of the four main boys of South Park, only one is not in the top 4 (Kenny) as he rarely speaks. However, since he is an integral character (front and center in posters), it is important to analyze what he says to better understand the show’s popularity in general. Below we see the most common words by each of the four boys. As we can see, these boys are closely knit (saying dude a lot). Cartman is the most offensive when it comes to saying specific words in context, while Kenny seems to use only interjections in his speech. Stan and Kyle are the more grounded characters, giving us a balance and a foil to the other two. 
+
 
 ```{r}
 #| label: Sentiments Based on Main Character for South Park
