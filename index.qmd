@@ -76,7 +76,7 @@ To obtain these scripts to analyze, we each individually found a website contain
 INSERT
 
 ### Euphoria
-INSERT
+https://euphoria.fandom.com/wiki/Euphoria_Wiki
 
 ### South Park
 INSERT
@@ -501,7 +501,8 @@ gg_filtered_pos_neg |>
 ```
 
 ### Euphoria
-EXPLAIN THE CHARACTERS
+
+The five characters who speak the most in Euphoria are Rue, Nate, Jules, Maddy, and Kat. Rue, the main protagonist, speaks significantly more than any other character because she also often acts as a narrator. This also makes sense with the fact that her positivity score is the closest to the rating of the series as a whole. Jules is Rue's on-and-off girlfriend throughout the first season. One of the main plot lines of the season is their internal conflict as they both grapple with how their own identities fit into the relationship, as demonstrated by the appearance of "feel" in both of their lists of most frequent words. Jules has the highest positivity score of the main characters, as she is often the only source of hope and comfort for Rue during her struggle with addiction. She is also shown texting frequently, which is why "ur" and "lol" are among her most used words. Nate, on the other hand, is a misogynistic, abusive football player with severe anger issues stemming from his sexual insecurity and dysfunctional family, earning him the lowest positivity score with commonly said words like "rape," "hurt," and "motherfucker." Maddy and Kat both speak less than the three main characters, so their vocabularies seem slightly less revealing of their personalities and relationships, but Kat is the only character of the five to have the words "sex" and "cool" in her top 15 words, hinting at her issues with body positivity, self-confidence, and her relationship with sex.
 
 ```{r}
 #| label: Most Common Words by the Top 5 Characters in Euphoria
@@ -531,7 +532,7 @@ euph_words |>
       # as `x` and `y` in `aes()`
       x = NULL,
       y = "Number of instances",
-      title = "The most common words said by top 5 characters in Euphoria"
+      title = "The most common words said by the top 5 characters in Euphoria"
     ) +
   facet_wrap(facets = ~reorder(str_to_title(char), -n), scales = "free_y") +
   scale_fill_manual(values = mycolors) +
