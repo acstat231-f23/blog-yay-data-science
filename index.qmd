@@ -367,6 +367,12 @@ positivty_scores |>
 ## Categorical Sentiment Analysis
 EXPLAIN OUR categorical SENTIMENT ANALYSIS
 
+<!-- Begin columns environment -->
+:::::: {style="display: flex; font-size: large;"}
+
+<!-- Create a column -->
+::: {}
+
 ### Gilmore Girls
 
 ```{r}
@@ -398,6 +404,15 @@ gg_filtered_sentiments|>
   theme_light()
 
 ```
+:::
+
+<!-- Create another column (this one is just adding horizontal space to separate content) -->
+::: {}
+<div class="horizontalgap" style="width:40px"></div>
+:::
+
+<!-- Create another column -->
+::: {}
 
 ### Euphoria
 ```{r}
@@ -426,6 +441,13 @@ euph_sentiments |>
   theme_light()
 
 ```
+:::
+
+::: {}
+<div class="horizontalgap" style="width:40px"></div>
+:::
+
+::: {}
 
 ### South Park
 ```{r}
@@ -453,6 +475,12 @@ sp_lines_filtered_sentiments|>
   theme_light()
 
 ```
+
+:::
+
+::::::
+<!-- End columns environment with matching length indicator-->
+
 
 # Character Analysis
 In each of these shows we narrowed down the characters to the top 5 (or 4) main characters that contribute the most to the dialogue or culture of the show. This shows the breakdown of the most common words seen above into the most common characters, highlighting their similarities and differences.
@@ -520,7 +548,7 @@ gg_filtered_pos_neg |>
   arrange(factor(`str_to_title(character)`, levels = gg_character_data$char_names))|>
   kable(booktabs = TRUE, digits = 3, col.names = c(
     "Character",
-    "Overall Mean of Sentiment Throughout the show"
+    "Mean Positivity Score Throughout the Show"
   )) |>
   kable_styling()
 ```
@@ -585,7 +613,7 @@ euph_pos_neg |>
   arrange(factor(`str_to_title(char)`, levels = c("Rue","Nate","Jules","Maddy","Kat"))) |>
   kable(booktabs = TRUE, digits = 3, col.names = c(
     "Character",
-    "Overall Mean of Sentiment Throughout the show"
+    "Mean Positivity Score Throughout the Show"
   )) |>
   kable_styling()
 ```
@@ -648,7 +676,7 @@ sp_lines_filtered_pos_neg %>%
   summarize(mean = mean(value, na.rm = TRUE)) %>%
   kable(booktabs = TRUE, digits = 3, col.names = c(
     "Character",
-    "Overall Mean of Sentiment Throughout the show"
+    "Mean Positivity Score Throughout the Show"
   )) %>%
   kable_styling()
 
