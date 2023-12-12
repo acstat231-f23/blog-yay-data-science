@@ -484,12 +484,14 @@ gg_filtered|>
   group_by(character)|>
   count(word, sort = TRUE) |>
   slice(1:15) |>
+  mutate(word = reorder_within(word, n, character))|>
   ggplot(aes(x = fct_reorder(word, n), 
              y = n, 
              fill = as.factor(n))) +
   geom_col() +
   # Rotate graph
-  coord_flip() +
+  coord_flip() +  
+  scale_x_reordered()+
   guides(fill = "none") +
   labs(
     x = NULL,
@@ -515,6 +517,7 @@ gg_filtered_pos_neg |>
   filter(str_to_title(character) %in% char_names) |>
   group_by(str_to_title(character)) |>
   summarize(mean = mean(value, na.rm = TRUE)) |>
+  arrange(factor(`str_to_title(character)`, levels = gg_character_data$char_names))|>
   kable(booktabs = TRUE, digits = 3, col.names = c(
     "Character",
     "Overall Mean of Sentiment Throughout the show"
