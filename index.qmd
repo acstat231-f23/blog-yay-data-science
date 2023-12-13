@@ -691,19 +691,19 @@ sp_lines_filtered_pos_neg %>%
 # Analysis and Conclusion
 
 ## Analysis
-Talk specifics, values, words
+Some of the most notable common words in Gilmore girls are time, mom, call, people, love, and coffee, which reveal many of the common themes in the show: the passage of time/growing up, motherhood and mother-daughter relationships, community, love, and of course, coffee. This show is a lot more positive than the other ones by positivity score, the color-coded most common words, and the character breakdown of positivity scores. This makes sense, as it is intended to be a comfort show and does not use too many cuss words or consistently deal with really negative topics. 
 
+Regarding the character analysis, it makes sense that Lorelai and Rory say mom a lot since their relationships with their mothers are incredibly formative for them and are crucial to the basis of the show. The lack of the word dad in Rory’s top 15 words also reveals the absence of her father in her upbringing in comparison to Lorelai, where dad is one of her most common words. Emily’s positivity score seems shocking at first since she is well known as a very belligerent and arrogant character at times, but this can be attributed to her mannerisms and the words like “wonderful” that she tends to use, which signify her high socioeconomic status more than other character traits. Luke has a lower positivity score, which aligns with his grumpy and sarcastic nature. Sookie has a high score as well, as she is very bubbly and goofy. 
 
-
+INSERT EUPHORIA HERE
 
 For South Park, the overall negative positivity score (both by the show as a whole and by the four main characters) reflects its status as a satirical comedy unafraid to make bold statements. However, that also means that there is a nice balance of heart-warming moments as well (compared to a show like Euphoria which these moments are few and far between). This is reflected on the sentiments based on the most common (non-stop) words and the categorical sentiment analysis (eg. fear and joy were very close in terms of instances). This mix of emotion, as well as the balance of the main characters' characteristics likely draws and maintains its fanbase. 
+
+Overall, it is clear that these shows differ a lot based on the most common words, positivity, and sentiment breakdown and reveal the different themes and genres of these shows; these shows cater to a variety of target audiences.
 
 ## Conclusion
 big takeaways, what do people like, why do they like it? where do we move from here? if we were to continue use new sentiment analysis database to get more accurate analyses/values/visualizations?
 
+Gilmore Girls has been consistently popular since it aired for its comforting, relatable, and almost utopian depiction of a tight-knit small town community. ___________ INSERT EUPHORIA HERE AND MAKE ONE LITTLE PARAGRAPH _________________ People like South Park for its unapologetic tellings of modern stories with a balanced character selection that isn't afraid to say what they want to say, but aren't complete potty mouths. These three different shows reveal that humans tend to consume media for different purposes: comfort, escape, humor, shock, and drama, to name a few. They show different aspects of human nature and the way that modern media is consumed for numerous purposes. 
 
-
-People like South Park for its unapologetic tellings of modern stories with a balanced character selection that isn't afraid to say what they want to say, but aren't complete potty mouths. 
-
-
-For future analyses, using some sort of machine learning to get a sentiment analysis tailored to shows rather than being a one-size-fits-all database would be more effective at showing context behind certain words. Although we agree with most of the values associated to words in the AFINN database, words such as "bitch" were placed more negative than words like "fuck". 
+For future analyses, using some sort of machine learning to get a sentiment analysis tailored to shows rather than being a one-size-fits-all database would be more effective at showing context behind certain words. Although we agree with most of the values associated to words in the AFINN database, words such as "b`*`tch" were placed more negative than words like "f`*`ck", which does not account for these words being used in a positive way. 
