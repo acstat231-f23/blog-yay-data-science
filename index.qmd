@@ -76,7 +76,7 @@ South Park South Park is a satirical sitcom infamous for its exploration on offe
 To obtain these scripts to analyze, we each individually found a website containing the episode scripts and webscraped them into a dataframe.
 
 ### Gilmore Girls
-INSERT
+Gilmore Girls has a total of 157 episodes across 8 seasons, each about 45 minutes long (and the last season is actually just 4 episodes of 1.5 hour length). The scripts for all of these episodes can be accessed on https://scriptmochi.com/tv-series/gilmore-girls, a website with links for each episode. We scraped through all of these episodes, creating a data frame with the link of the episodes, the name of the episode, and the whole script. We manually added the season and then separated the text by character lines and then by word. 
 
 ### Euphoria
 https://euphoria.fandom.com/wiki/Euphoria_Wiki
@@ -85,7 +85,7 @@ https://euphoria.fandom.com/wiki/Euphoria_Wiki
 South Park has a total of 321 episodes (excluding specials, movies, etc) that are each around 20-25 minutes long. The Fandom Wikipedia has the scripts for all these shows, so scraping each table from each of these links would get us all the lines. We created a list of links based on the episode titles (scraped from wikipedia) and then iterated through all these links to webscrape all the lines. Most of the episodes were retrieved, but through this method, there were certain episodes we were unable to get (88.1%). However, this is more than enough to get the general idea of South Park, so we continued. Then, we wrangled to get rid of stage directions and split by word. 
 
 # Text Analysis
-EXPLAIN TEXT ANALYSIS PLAN
+First, we wanted to look at the most common words in the show before we use the sentiment analysis to analyze their positivity.
 
 ## Most Common Words
 Here are the most common words in these three shows after removing the stop words (using the dplyr stop words data set and individually selected stop words that were not included in that data set).
@@ -344,7 +344,7 @@ These mean positivity scores represent the overall sentiment of each three shows
 
 #kable table to look nicer
 
-shows <- c("Gilmore_Girls", "Euphoria", "South_Park")
+shows <- c("Gilmore Girls", "Euphoria", "South Park")
 values <- c(mean(gg_filtered_pos_neg$value), 
             mean(euph_pos_neg$value), 
             mean(sp_lines_filtered_pos_neg$value, na.rm = TRUE)
@@ -369,7 +369,7 @@ positivty_scores |>
 ```
 
 ## Categorical Sentiment Analysis
-EXPLAIN OUR categorical SENTIMENT ANALYSIS
+Given in the package are these 8 categorical sentiments, where each word in the database is associated to one or more of these sentiments. We joined these sentiment assignments with the words contained in each of these scripts to display the difference in sentiment breakdown for the three different shows.
 
 <!-- Begin columns environment -->
 :::::: {style="display: flex; font-size: large;"}
@@ -390,6 +390,8 @@ mycolors <- colorRampPalette(brewer.pal(8, "Set3"))(nb.cols)
 
 #and how common the 8 different categorical sentiments are (visualization)
 #one word can have more than one sentiment in the dplyr dataset
+#positive and negative are also counted as sentiments
+#we wanted to only show the other ones
 gg_filtered_sentiments|>
   filter(sentiment != "positive" & sentiment != "negative")|>
   count(sentiment, sort = TRUE) |>
@@ -491,7 +493,7 @@ In each of these shows we narrowed down the characters to the top 5 (or 4) main 
 
 ### Gilmore Girls
 
-The top 5 characters in Gilmore Girls: Lorelai and Rory, the mother and daughter duo. Luke, the owner of the town diner Lorelai and Rory frequent (and Lorelai's future boyfriend/husband). Emily, Lorelai's mother and Rory's grandmother. Sookie, Lorelai's best friend, the chef at the inn that they work at/run together.
+The top 5 characters in Gilmore Girls: Lorelai and Rory, the mother and daughter duo. Rory, a studious and ambitious teenager, takes after her energetic, driven, coffee-obsessed mother Lorelai. Luke, the owner of the town diner that Lorelai and Rory frequent is also Lorelai's future boyfriend/husband. Emily, Lorelai's mother and Rory's grandmother, is a very posh, stubborn woman. Sookie is Lorelai's bubbly and sometimes frazzled best friend and is the chef at the inn that they work at/run together.
 ```{r}
 #| label: Gilmore Girls Most Common Words by Character Visualization 
 #| fig.align: left
